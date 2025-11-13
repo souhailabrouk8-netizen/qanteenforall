@@ -4,18 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Conrad Rabat Arzana - Food Cost Management System</title>
-    
-    <!-- IMPORTANT: For Netlify deployment, all resources must be loaded from CDN -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    
-    <!-- Firebase SDK -->
-    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-auth-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-analytics-compat.js"></script>
-    
     <style>
         :root {
             --conrad-black: #000000;
@@ -320,78 +311,6 @@
             background-color: rgba(212, 175, 55, 0.1);
         }
 
-        /* Login styles */
-        .login-container {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            min-height: 100vh;
-            background: linear-gradient(135deg, var(--conrad-black) 0%, #333 100%);
-        }
-
-        .login-card {
-            width: 100%;
-            max-width: 400px;
-            padding: 30px;
-            border-radius: 8px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-            background-color: white;
-        }
-
-        .login-header {
-            text-align: center;
-            margin-bottom: 30px;
-        }
-
-        .login-header h2 {
-            color: var(--conrad-black);
-            margin-bottom: 10px;
-        }
-
-        .login-header p {
-            color: var(--conrad-medium-gray);
-        }
-
-        .login-brand {
-            color: var(--conrad-gold) !important;
-            font-weight: bold;
-            font-size: 1.8rem;
-        }
-
-        .error-container {
-            background-color: #f8d7da;
-            border: 1px solid #f5c6cb;
-            border-radius: 4px;
-            padding: 15px;
-            margin: 20px 0;
-        }
-
-        .config-section {
-            background-color: #f8f9fa;
-            border: 1px solid #dee2e6;
-            border-radius: 8px;
-            padding: 20px;
-            margin-bottom: 20px;
-        }
-
-        .config-section h3 {
-            color: var(--conrad-black);
-            margin-bottom: 15px;
-        }
-
-        .analytics-section {
-            background-color: #f8f9fa;
-            border: 1px solid #dee2e6;
-            border-radius: 8px;
-            padding: 20px;
-            margin-bottom: 20px;
-        }
-
-        .analytics-section h3 {
-            color: var(--conrad-black);
-            margin-bottom: 15px;
-        }
-
         @media (max-width: 768px) {
             .stat-card h3 {
                 font-size: 1.8rem;
@@ -404,583 +323,541 @@
     </style>
 </head>
 <body>
-    <!-- IMPORTANT: This single-page app uses hash routing for Netlify compatibility -->
-    <div id="app">
-        <!-- Login Screen -->
-        <div id="loginScreen" class="login-container" style="display: none;">
-            <div class="login-card">
-                <div class="login-header">
-                    <div class="login-brand mb-3">
-                        <i class="bi bi-building"></i> Conrad Rabat Arzana
+    <!-- Loading Overlay -->
+    <div id="loadingOverlay" class="loading-overlay" style="display: none;">
+        <div class="loading-content">
+            <h3>Processing Data</h3>
+            <div class="spinner-border" role="status">
+                <span class="visually-hidden">Loading...</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark">
+        <div class="container">
+            <a class="navbar-brand" href="#">
+                <i class="bi bi-building"></i> Conrad Rabat Arzana
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link active" href="#" data-section="dashboard">
+                            <i class="bi bi-speedometer2"></i> Dashboard
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#" data-section="employees">
+                            <i class="bi bi-people"></i> Employees
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#" data-section="foodcost">
+                            <i class="bi bi-currency-dollar"></i> Food Cost
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#" data-section="meals">
+                            <i class="bi bi-egg-fried"></i> Employee Meals
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#" data-section="waste">
+                            <i class="bi bi-trash"></i> Waste Tracking
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#" data-section="menu">
+                            <i class="bi bi-calendar-week"></i> Menu Planning
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#" data-section="goals">
+                            <i class="bi bi-bullseye"></i> Goals & Benchmark
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="container mt-4">
+        <!-- Dashboard Section -->
+        <div id="dashboard" class="content-section">
+            <div class="row mb-4">
+                <div class="col-md-3">
+                    <div class="stat-card">
+                        <h3 id="totalEmployees">0</h3>
+                        <p>Total Employees</p>
                     </div>
-                    <h2>Food Cost Management</h2>
-                    <p>Please sign in to continue</p>
                 </div>
-                <form id="loginForm">
-                    <div class="mb-3">
-                        <label for="email" class="form-label">Email</label>
-                        <input type="email" class="form-control" id="email" required>
+                <div class="col-md-3">
+                    <div class="stat-card">
+                        <h3 id="todayFoodCost">0 MAD</h3>
+                        <p>Today's Food Cost</p>
                     </div>
-                    <div class="mb-3">
-                        <label for="password" class="form-label">Password</label>
-                        <input type="password" class="form-control" id="password" required>
+                </div>
+                <div class="col-md-3">
+                    <div class="stat-card">
+                        <h3 id="weeklyAverage">0 MAD</h3>
+                        <p>Weekly Average</p>
                     </div>
-                    <div class="d-grid">
-                        <button type="submit" class="btn btn-primary">Sign In</button>
+                </div>
+                <div class="col-md-3">
+                    <div class="stat-card">
+                        <h3 id="wastePercentage">0%</h3>
+                        <p>Waste Percentage</p>
                     </div>
-                    <div id="loginError" class="alert alert-danger mt-3" style="display: none;"></div>
-                </form>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="card dashboard-card">
+                        <div class="card-header">
+                            <i class="bi bi-graph-up"></i> Daily Food Cost Trend
+                        </div>
+                        <div class="card-body">
+                            <div class="chart-container">
+                                <canvas id="dailyCostChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="card dashboard-card">
+                        <div class="card-header">
+                            <i class="bi bi-pie-chart"></i> Consumption by Meal Type
+                        </div>
+                        <div class="card-body">
+                            <div class="chart-container">
+                                <canvas id="mealTypeChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row mt-4">
+                <div class="col-md-12">
+                    <div class="card dashboard-card">
+                        <div class="card-header">
+                            <i class="bi bi-calendar-check"></i> Weekly Benchmark
+                        </div>
+                        <div class="card-body">
+                            <div class="chart-container">
+                                <canvas id="benchmarkChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
 
-        <!-- Main Application (Hidden until login) -->
-        <div id="mainApp" style="display: none;">
-            <!-- Loading Overlay -->
-            <div id="loadingOverlay" class="loading-overlay" style="display: none;">
-                <div class="loading-content">
-                    <h3>Processing Data</h3>
-                    <div class="spinner-border" role="status">
-                        <span class="visually-hidden">Loading...</span>
+        <!-- Employees Section -->
+        <div id="employees" class="content-section" style="display: none;">
+            <div class="card">
+                <div class="card-header">
+                    <i class="bi bi-people"></i> Department Employee Count by Meal
+                </div>
+                <div class="card-body">
+                    <div class="row mb-3">
+                        <div class="col-md-3">
+                            <label for="departmentSelect" class="form-label">Select Department</label>
+                            <select class="form-select" id="departmentSelect">
+                                <option value="">Choose Department...</option>
+                                <option value="Housekeeping">Housekeeping</option>
+                                <option value="Engineering">Engineering</option>
+                                <option value="Front Office">Front Office</option>
+                                <option value="Security and IT">Security and IT</option>
+                                <option value="Finance and Procurement">Finance and Procurement</option>
+                                <option value="Marketing">Marketing</option>
+                                <option value="F&B (La brise)">F&B (La brise)</option>
+                                <option value="F&B (l'oursin)">F&B (l'oursin)</option>
+                                <option value="F&B (99)">F&B (99)</option>
+                                <option value="F&B (IRD AND BANQUETING)">F&B (IRD AND BANQUETING)</option>
+                            </select>
+                        </div>
+                        <div class="col-md-2">
+                            <label for="mealTypeSelect" class="form-label">Meal Type</label>
+                            <select class="form-select" id="mealTypeSelect">
+                                <option value="">Choose...</option>
+                                <option value="Breakfast">Breakfast</option>
+                                <option value="Lunch">Lunch</option>
+                                <option value="Dinner">Dinner</option>
+                            </select>
+                        </div>
+                        <div class="col-md-2">
+                            <label for="employeeCount" class="form-label">Number of Employees</label>
+                            <input type="number" class="form-control" id="employeeCount" min="1" placeholder="Enter count">
+                        </div>
+                        <div class="col-md-2">
+                            <label for="employeeDate" class="form-label">Date</label>
+                            <input type="date" class="form-control" id="employeeDate">
+                        </div>
+                        <div class="col-md-3 d-flex align-items-end">
+                            <button class="btn btn-primary w-100" id="saveEmployeeCount">
+                                <i class="bi bi-save"></i> Save Count
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Meal Summary Cards -->
+                    <div class="row mb-3">
+                        <div class="col-md-4">
+                            <div class="meal-summary">
+                                <h5><i class="bi bi-sunrise"></i> Breakfast Total</h5>
+                                <div class="summary-item">
+                                    <span>Total Employees:</span>
+                                    <span id="breakfastTotal">0</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="meal-summary">
+                                <h5><i class="bi bi-sun"></i> Lunch Total</h5>
+                                <div class="summary-item">
+                                    <span>Total Employees:</span>
+                                    <span id="lunchTotal">0</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="meal-summary">
+                                <h5><i class="bi bi-moon"></i> Dinner Total</h5>
+                                <div class="summary-item">
+                                    <span>Total Employees:</span>
+                                    <span id="dinnerTotal">0</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="table-responsive">
+                        <table class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th>Date</th>
+                                    <th>Department</th>
+                                    <th>Meal Type</th>
+                                    <th>Employee Count</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="employeeTableBody">
+                                <!-- Data will be populated here -->
+                            </tbody>
+                        </table>
                     </div>
                 </div>
             </div>
+        </div>
 
-            <!-- Navigation -->
-            <nav class="navbar navbar-expand-lg navbar-dark">
-                <div class="container">
-                    <a class="navbar-brand" href="#dashboard">
-                        <i class="bi bi-building"></i> Conrad Rabat Arzana
-                    </a>
-                    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-                        <span class="navbar-toggler-icon"></span>
-                    </button>
-                    <div class="collapse navbar-collapse" id="navbarNav">
-                        <ul class="navbar-nav ms-auto">
-                            <li class="nav-item">
-                                <a class="nav-link active" href="#dashboard">
-                                    <i class="bi bi-speedometer2"></i> Dashboard
-                                </a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link" href="#employees">
-                                    <i class="bi bi-people"></i> Employees
-                                </a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link" href="#foodcost">
-                                    <i class="bi bi-currency-dollar"></i> Food Cost
-                                </a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link" href="#meals">
-                                    <i class="bi bi-egg-fried"></i> Employee Meals
-                                </a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link" href="#waste">
-                                    <i class="bi bi-trash"></i> Waste Tracking
-                                </a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link" href="#menu">
-                                    <i class="bi bi-calendar-week"></i> Menu Planning
-                                </a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link" href="#goals">
-                                    <i class="bi bi-bullseye"></i> Goals & Benchmark
-                                </a>
-                            </li>
-                            <li class="nav-item dropdown">
-                                <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown">
-                                    <i class="bi bi-person-circle"></i> <span id="userEmail"></span>
-                                </a>
-                                <ul class="dropdown-menu">
-                                    <li><a class="dropdown-item" href="#config">Settings</a></li>
-                                    <li><a class="dropdown-item" href="#" id="logoutBtn">Logout</a></li>
-                                </ul>
-                            </li>
-                        </ul>
+        <!-- Food Cost Section -->
+        <div id="foodcost" class="content-section" style="display: none;">
+            <div class="card">
+                <div class="card-header">
+                    <i class="bi bi-currency-dollar"></i> Canteen Food Cost Tracking
+                </div>
+                <div class="card-body">
+                    <div class="row mb-3">
+                        <div class="col-md-3">
+                            <label for="costDate" class="form-label">Date</label>
+                            <input type="date" class="form-control" id="costDate">
+                        </div>
+                        <div class="col-md-3">
+                            <label for="costMealType" class="form-label">Meal Type</label>
+                            <select class="form-select" id="costMealType">
+                                <option value="">Choose Meal Type...</option>
+                                <option value="Breakfast">Breakfast</option>
+                                <option value="Lunch">Lunch</option>
+                                <option value="Dinner">Dinner</option>
+                            </select>
+                        </div>
+                        <div class="col-md-3">
+                            <label for="foodCost" class="form-label">Food Cost (MAD)</label>
+                            <input type="number" class="form-control" id="foodCost" min="0" step="0.01" placeholder="Enter cost">
+                        </div>
+                        <div class="col-md-3 d-flex align-items-end">
+                            <button class="btn btn-primary w-100" id="saveFoodCost">
+                                <i class="bi bi-save"></i> Save Cost
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="table-responsive">
+                        <table class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th>Date</th>
+                                    <th>Meal Type</th>
+                                    <th>Food Cost (MAD)</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="foodCostTableBody">
+                                <!-- Data will be populated here -->
+                            </tbody>
+                        </table>
                     </div>
                 </div>
-            </nav>
+            </div>
+        </div>
 
-            <!-- Main Content -->
-            <div class="container mt-4">
-                <!-- Dashboard Section -->
-                <div id="dashboard" class="content-section">
-                    <div class="row mb-4">
-                        <div class="col-md-3">
-                            <div class="stat-card">
-                                <h3 id="totalEmployees">0</h3>
-                                <p>Total Employees</p>
-                            </div>
+        <!-- Employee Meals Section -->
+        <div id="meals" class="content-section" style="display: none;">
+            <div class="card">
+                <div class="card-header">
+                    <i class="bi bi-egg-fried"></i> Employee Meal Tracking
+                </div>
+                <div class="card-body">
+                    <div class="row mb-3">
+                        <div class="col-md-2">
+                            <label for="mealDate" class="form-label">Date</label>
+                            <input type="date" class="form-control" id="mealDate">
+                        </div>
+                        <div class="col-md-2">
+                            <label for="mealType" class="form-label">Meal Type</label>
+                            <select class="form-select" id="mealType">
+                                <option value="">Choose...</option>
+                                <option value="Breakfast">Breakfast</option>
+                                <option value="Lunch">Lunch</option>
+                                <option value="Dinner">Dinner</option>
+                            </select>
                         </div>
                         <div class="col-md-3">
-                            <div class="stat-card">
-                                <h3 id="todayFoodCost">0 MAD</h3>
-                                <p>Today's Food Cost</p>
-                            </div>
+                            <label for="mealItem" class="form-label">Meal Item</label>
+                            <input type="text" class="form-control" id="mealItem" placeholder="Enter meal item">
+                        </div>
+                        <div class="col-md-2">
+                            <label for="mealCost" class="form-label">Cost per Item (MAD)</label>
+                            <input type="number" class="form-control" id="mealCost" min="0" step="0.01" placeholder="Enter cost">
+                        </div>
+                        <div class="col-md-2">
+                            <label for="mealQuantity" class="form-label">Quantity</label>
+                            <input type="number" class="form-control" id="mealQuantity" min="1" placeholder="Enter quantity">
+                        </div>
+                        <div class="col-md-1 d-flex align-items-end">
+                            <button class="btn btn-primary w-100" id="saveMeal">
+                                <i class="bi bi-save"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="table-responsive">
+                        <table class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th>Date</th>
+                                    <th>Meal Type</th>
+                                    <th>Meal Item</th>
+                                    <th>Cost per Item (MAD)</th>
+                                    <th>Quantity</th>
+                                    <th>Total Cost (MAD)</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="mealTableBody">
+                                <!-- Data will be populated here -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Waste Tracking Section -->
+        <div id="waste" class="content-section" style="display: none;">
+            <div class="card">
+                <div class="card-header">
+                    <i class="bi bi-trash"></i> Waste Tracking
+                </div>
+                <div class="card-body">
+                    <div class="row mb-3">
+                        <div class="col-md-3">
+                            <label for="wasteDate" class="form-label">Date</label>
+                            <input type="date" class="form-control" id="wasteDate">
                         </div>
                         <div class="col-md-3">
-                            <div class="stat-card">
-                                <h3 id="weeklyAverage">0 MAD</h3>
-                                <p>Weekly Average</p>
-                            </div>
+                            <label for="wasteMealType" class="form-label">Meal Type</label>
+                            <select class="form-select" id="wasteMealType">
+                                <option value="">Choose...</option>
+                                <option value="Breakfast">Breakfast</option>
+                                <option value="Lunch">Lunch</option>
+                                <option value="Dinner">Dinner</option>
+                            </select>
                         </div>
                         <div class="col-md-3">
-                            <div class="stat-card">
-                                <h3 id="wastePercentage">0%</h3>
-                                <p>Waste Percentage</p>
+                            <label for="wasteAmount" class="form-label">Waste Amount (kg)</label>
+                            <input type="number" class="form-control" id="wasteAmount" min="0" step="0.01" placeholder="Enter amount">
+                        </div>
+                        <div class="col-md-3 d-flex align-items-end">
+                            <button class="btn btn-primary w-100" id="saveWaste">
+                                <i class="bi bi-save"></i> Save Waste
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="table-responsive">
+                        <table class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th>Date</th>
+                                    <th>Meal Type</th>
+                                    <th>Waste Amount (kg)</th>
+                                    <th>Estimated Cost (MAD)</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="wasteTableBody">
+                                <!-- Data will be populated here -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Menu Planning Section -->
+        <div id="menu" class="content-section" style="display: none;">
+            <div class="card">
+                <div class="card-header">
+                    <i class="bi bi-calendar-week"></i> Canteen Weekly Menu Planning
+                </div>
+                <div class="card-body">
+                    <div class="row mb-3">
+                        <div class="col-md-2">
+                            <label for="weekStart" class="form-label">Week Starting</label>
+                            <input type="date" class="form-control" id="weekStart">
+                        </div>
+                        <div class="col-md-2">
+                            <label for="menuDay" class="form-label">Day</label>
+                            <select class="form-select" id="menuDay">
+                                <option value="">Choose...</option>
+                                <option value="Monday">Monday</option>
+                                <option value="Tuesday">Tuesday</option>
+                                <option value="Wednesday">Wednesday</option>
+                                <option value="Thursday">Thursday</option>
+                                <option value="Friday">Friday</option>
+                                <option value="Saturday">Saturday</option>
+                                <option value="Sunday">Sunday</option>
+                            </select>
+                        </div>
+                        <div class="col-md-2">
+                            <label for="menuMealType" class="form-label">Meal Type</label>
+                            <select class="form-select" id="menuMealType">
+                                <option value="">Choose...</option>
+                                <option value="Breakfast">Breakfast</option>
+                                <option value="Lunch">Lunch</option>
+                                <option value="Dinner">Dinner</option>
+                            </select>
+                        </div>
+                        <div class="col-md-2">
+                            <label for="expectedEmployees" class="form-label">Expected Employees</label>
+                            <input type="number" class="form-control" id="expectedEmployees" min="1" placeholder="Enter count">
+                        </div>
+                        <div class="col-md-2 d-flex align-items-end">
+                            <button class="btn btn-primary w-100" id="saveMenuPlan">
+                                <i class="bi bi-save"></i> Save Plan
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label for="menuItems" class="form-label">Menu Items (one per line)</label>
+                            <textarea class="form-control" id="menuItems" rows="3" placeholder="Enter menu items"></textarea>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="menuCost" class="form-label">Total Cost (MAD)</label>
+                            <input type="number" class="form-control" id="menuCost" min="0" step="0.01" placeholder="Enter total cost">
+                        </div>
+                    </div>
+
+                    <div class="table-responsive">
+                        <table class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th>Week</th>
+                                    <th>Day</th>
+                                    <th>Meal Type</th>
+                                    <th>Expected Employees</th>
+                                    <th>Menu Items</th>
+                                    <th>Total Cost (MAD)</th>
+                                    <th>Cost per Employee (MAD)</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="menuTableBody">
+                                <!-- Data will be populated here -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Goals & Benchmark Section -->
+        <div id="goals" class="content-section" style="display: none;">
+            <div class="card">
+                <div class="card-header">
+                    <i class="bi bi-bullseye"></i> Cost Saving Goals & Benchmark
+                </div>
+                <div class="card-body">
+                    <div class="row mb-3">
+                        <div class="col-md-4">
+                            <label for="goalPeriod" class="form-label">Goal Period</label>
+                            <select class="form-select" id="goalPeriod">
+                                <option value="">Choose...</option>
+                                <option value="Daily">Daily</option>
+                                <option value="Weekly">Weekly</option>
+                                <option value="Monthly">Monthly</option>
+                            </select>
+                        </div>
+                        <div class="col-md-4">
+                            <label for="goalAmount" class="form-label">Target Food Cost (MAD)</label>
+                            <input type="number" class="form-control" id="goalAmount" min="0" step="0.01" placeholder="Enter target cost">
+                        </div>
+                        <div class="col-md-4 d-flex align-items-end">
+                            <button class="btn btn-primary w-100" id="saveGoal">
+                                <i class="bi bi-save"></i> Set Goal
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="row mb-3">
+                        <div class="col-md-12">
+                            <div class="alert alert-conrad">
+                                <h5><i class="bi bi-info-circle"></i> Current Goals</h5>
+                                <div id="currentGoals">
+                                    <!-- Goals will be displayed here -->
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row mb-3">
+                        <div class="col-md-12">
+                            <h5>Goal Progress</h5>
+                            <div id="goalProgress">
+                                <!-- Progress bars will be displayed here -->
                             </div>
                         </div>
                     </div>
 
                     <div class="row">
-                        <div class="col-md-6">
-                            <div class="card dashboard-card">
-                                <div class="card-header">
-                                    <i class="bi bi-graph-up"></i> Daily Food Cost Trend
-                                </div>
-                                <div class="card-body">
-                                    <div class="chart-container">
-                                        <canvas id="dailyCostChart"></canvas>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="card dashboard-card">
-                                <div class="card-header">
-                                    <i class="bi bi-pie-chart"></i> Consumption by Meal Type
-                                </div>
-                                <div class="card-body">
-                                    <div class="chart-container">
-                                        <canvas id="mealTypeChart"></canvas>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="row mt-4">
                         <div class="col-md-12">
                             <div class="card dashboard-card">
                                 <div class="card-header">
-                                    <i class="bi bi-calendar-check"></i> Weekly Benchmark
+                                    <i class="bi bi-graph-up-arrow"></i> Benchmark Performance
                                 </div>
                                 <div class="card-body">
                                     <div class="chart-container">
-                                        <canvas id="benchmarkChart"></canvas>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Employees Section -->
-                <div id="employees" class="content-section" style="display: none;">
-                    <div class="card">
-                        <div class="card-header">
-                            <i class="bi bi-people"></i> Department Employee Count by Meal
-                        </div>
-                        <div class="card-body">
-                            <div class="row mb-3">
-                                <div class="col-md-3">
-                                    <label for="departmentSelect" class="form-label">Select Department</label>
-                                    <select class="form-select" id="departmentSelect">
-                                        <option value="">Choose Department...</option>
-                                        <option value="Housekeeping">Housekeeping</option>
-                                        <option value="Engineering">Engineering</option>
-                                        <option value="Front Office">Front Office</option>
-                                        <option value="Security and IT">Security and IT</option>
-                                        <option value="Finance and Procurement">Finance and Procurement</option>
-                                        <option value="Marketing">Marketing</option>
-                                        <option value="F&B (La brise)">F&B (La brise)</option>
-                                        <option value="F&B (l'oursin)">F&B (l'oursin)</option>
-                                        <option value="F&B (99)">F&B (99)</option>
-                                        <option value="F&B (IRD AND BANQUETING)">F&B (IRD AND BANQUETING)</option>
-                                    </select>
-                                </div>
-                                <div class="col-md-2">
-                                    <label for="mealTypeSelect" class="form-label">Meal Type</label>
-                                    <select class="form-select" id="mealTypeSelect">
-                                        <option value="">Choose...</option>
-                                        <option value="Breakfast">Breakfast</option>
-                                        <option value="Lunch">Lunch</option>
-                                        <option value="Dinner">Dinner</option>
-                                    </select>
-                                </div>
-                                <div class="col-md-2">
-                                    <label for="employeeCount" class="form-label">Number of Employees</label>
-                                    <input type="number" class="form-control" id="employeeCount" min="1" placeholder="Enter count">
-                                </div>
-                                <div class="col-md-2">
-                                    <label for="employeeDate" class="form-label">Date</label>
-                                    <input type="date" class="form-control" id="employeeDate">
-                                </div>
-                                <div class="col-md-3 d-flex align-items-end">
-                                    <button class="btn btn-primary w-100" id="saveEmployeeCount">
-                                        <i class="bi bi-save"></i> Save Count
-                                    </button>
-                                </div>
-                            </div>
-
-                            <!-- Meal Summary Cards -->
-                            <div class="row mb-3">
-                                <div class="col-md-4">
-                                    <div class="meal-summary">
-                                        <h5><i class="bi bi-sunrise"></i> Breakfast Total</h5>
-                                        <div class="summary-item">
-                                            <span>Total Employees:</span>
-                                            <span id="breakfastTotal">0</span>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="col-md-4">
-                                    <div class="meal-summary">
-                                        <h5><i class="bi bi-sun"></i> Lunch Total</h5>
-                                        <div class="summary-item">
-                                            <span>Total Employees:</span>
-                                            <span id="lunchTotal">0</span>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="col-md-4">
-                                    <div class="meal-summary">
-                                        <h5><i class="bi bi-moon"></i> Dinner Total</h5>
-                                        <div class="summary-item">
-                                            <span>Total Employees:</span>
-                                            <span id="dinnerTotal">0</span>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="table-responsive">
-                                <table class="table table-striped">
-                                    <thead>
-                                        <tr>
-                                            <th>Date</th>
-                                            <th>Department</th>
-                                            <th>Meal Type</th>
-                                            <th>Employee Count</th>
-                                            <th>Actions</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody id="employeeTableBody">
-                                        <!-- Data will be populated here -->
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Food Cost Section -->
-                <div id="foodcost" class="content-section" style="display: none;">
-                    <div class="card">
-                        <div class="card-header">
-                            <i class="bi bi-currency-dollar"></i> Canteen Food Cost Tracking
-                        </div>
-                        <div class="card-body">
-                            <div class="row mb-3">
-                                <div class="col-md-3">
-                                    <label for="costDate" class="form-label">Date</label>
-                                    <input type="date" class="form-control" id="costDate">
-                                </div>
-                                <div class="col-md-3">
-                                    <label for="costMealType" class="form-label">Meal Type</label>
-                                    <select class="form-select" id="costMealType">
-                                        <option value="">Choose Meal Type...</option>
-                                        <option value="Breakfast">Breakfast</option>
-                                        <option value="Lunch">Lunch</option>
-                                        <option value="Dinner">Dinner</option>
-                                    </select>
-                                </div>
-                                <div class="col-md-3">
-                                    <label for="foodCost" class="form-label">Food Cost (MAD)</label>
-                                    <input type="number" class="form-control" id="foodCost" min="0" step="0.01" placeholder="Enter cost">
-                                </div>
-                                <div class="col-md-3 d-flex align-items-end">
-                                    <button class="btn btn-primary w-100" id="saveFoodCost">
-                                        <i class="bi bi-save"></i> Save Cost
-                                    </button>
-                                </div>
-                            </div>
-
-                            <div class="table-responsive">
-                                <table class="table table-striped">
-                                    <thead>
-                                        <tr>
-                                            <th>Date</th>
-                                            <th>Meal Type</th>
-                                            <th>Food Cost (MAD)</th>
-                                            <th>Actions</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody id="foodCostTableBody">
-                                        <!-- Data will be populated here -->
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Employee Meals Section -->
-                <div id="meals" class="content-section" style="display: none;">
-                    <div class="card">
-                        <div class="card-header">
-                            <i class="bi bi-egg-fried"></i> Employee Meal Tracking
-                        </div>
-                        <div class="card-body">
-                            <div class="row mb-3">
-                                <div class="col-md-2">
-                                    <label for="mealDate" class="form-label">Date</label>
-                                    <input type="date" class="form-control" id="mealDate">
-                                </div>
-                                <div class="col-md-2">
-                                    <label for="mealType" class="form-label">Meal Type</label>
-                                    <select class="form-select" id="mealType">
-                                        <option value="">Choose...</option>
-                                        <option value="Breakfast">Breakfast</option>
-                                        <option value="Lunch">Lunch</option>
-                                        <option value="Dinner">Dinner</option>
-                                    </select>
-                                </div>
-                                <div class="col-md-3">
-                                    <label for="mealItem" class="form-label">Meal Item</label>
-                                    <input type="text" class="form-control" id="mealItem" placeholder="Enter meal item">
-                                </div>
-                                <div class="col-md-2">
-                                    <label for="mealCost" class="form-label">Cost per Item (MAD)</label>
-                                    <input type="number" class="form-control" id="mealCost" min="0" step="0.01" placeholder="Enter cost">
-                                </div>
-                                <div class="col-md-2">
-                                    <label for="mealQuantity" class="form-label">Quantity</label>
-                                    <input type="number" class="form-control" id="mealQuantity" min="1" placeholder="Enter quantity">
-                                </div>
-                                <div class="col-md-1 d-flex align-items-end">
-                                    <button class="btn btn-primary w-100" id="saveMeal">
-                                        <i class="bi bi-save"></i>
-                                    </button>
-                                </div>
-                            </div>
-
-                            <div class="table-responsive">
-                                <table class="table table-striped">
-                                    <thead>
-                                        <tr>
-                                            <th>Date</th>
-                                            <th>Meal Type</th>
-                                            <th>Meal Item</th>
-                                            <th>Cost per Item (MAD)</th>
-                                            <th>Quantity</th>
-                                            <th>Total Cost (MAD)</th>
-                                            <th>Actions</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody id="mealTableBody">
-                                        <!-- Data will be populated here -->
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Waste Tracking Section -->
-                <div id="waste" class="content-section" style="display: none;">
-                    <div class="card">
-                        <div class="card-header">
-                            <i class="bi bi-trash"></i> Waste Tracking
-                        </div>
-                        <div class="card-body">
-                            <div class="row mb-3">
-                                <div class="col-md-3">
-                                    <label for="wasteDate" class="form-label">Date</label>
-                                    <input type="date" class="form-control" id="wasteDate">
-                                </div>
-                                <div class="col-md-3">
-                                    <label for="wasteMealType" class="form-label">Meal Type</label>
-                                    <select class="form-select" id="wasteMealType">
-                                        <option value="">Choose...</option>
-                                        <option value="Breakfast">Breakfast</option>
-                                        <option value="Lunch">Lunch</option>
-                                        <option value="Dinner">Dinner</option>
-                                    </select>
-                                </div>
-                                <div class="col-md-3">
-                                    <label for="wasteAmount" class="form-label">Waste Amount (kg)</label>
-                                    <input type="number" class="form-control" id="wasteAmount" min="0" step="0.01" placeholder="Enter amount">
-                                </div>
-                                <div class="col-md-3 d-flex align-items-end">
-                                    <button class="btn btn-primary w-100" id="saveWaste">
-                                        <i class="bi bi-save"></i> Save Waste
-                                    </button>
-                                </div>
-                            </div>
-
-                            <div class="table-responsive">
-                                <table class="table table-striped">
-                                    <thead>
-                                        <tr>
-                                            <th>Date</th>
-                                            <th>Meal Type</th>
-                                            <th>Waste Amount (kg)</th>
-                                            <th>Estimated Cost (MAD)</th>
-                                            <th>Actions</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody id="wasteTableBody">
-                                        <!-- Data will be populated here -->
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Menu Planning Section -->
-                <div id="menu" class="content-section" style="display: none;">
-                    <div class="card">
-                        <div class="card-header">
-                            <i class="bi bi-calendar-week"></i> Canteen Weekly Menu Planning
-                        </div>
-                        <div class="card-body">
-                            <div class="row mb-3">
-                                <div class="col-md-2">
-                                    <label for="weekStart" class="form-label">Week Starting</label>
-                                    <input type="date" class="form-control" id="weekStart">
-                                </div>
-                                <div class="col-md-2">
-                                    <label for="menuDay" class="form-label">Day</label>
-                                    <select class="form-select" id="menuDay">
-                                        <option value="">Choose...</option>
-                                        <option value="Monday">Monday</option>
-                                        <option value="Tuesday">Tuesday</option>
-                                        <option value="Wednesday">Wednesday</option>
-                                        <option value="Thursday">Thursday</option>
-                                        <option value="Friday">Friday</option>
-                                        <option value="Saturday">Saturday</option>
-                                        <option value="Sunday">Sunday</option>
-                                    </select>
-                                </div>
-                                <div class="col-md-2">
-                                    <label for="menuMealType" class="form-label">Meal Type</label>
-                                    <select class="form-select" id="menuMealType">
-                                        <option value="">Choose...</option>
-                                        <option value="Breakfast">Breakfast</option>
-                                        <option value="Lunch">Lunch</option>
-                                        <option value="Dinner">Dinner</option>
-                                    </select>
-                                </div>
-                                <div class="col-md-2">
-                                    <label for="expectedEmployees" class="form-label">Expected Employees</label>
-                                    <input type="number" class="form-control" id="expectedEmployees" min="1" placeholder="Enter count">
-                                </div>
-                                <div class="col-md-2 d-flex align-items-end">
-                                    <button class="btn btn-primary w-100" id="saveMenuPlan">
-                                        <i class="bi bi-save"></i> Save Plan
-                                    </button>
-                                </div>
-                            </div>
-
-                            <div class="row mb-3">
-                                <div class="col-md-6">
-                                    <label for="menuItems" class="form-label">Menu Items (one per line)</label>
-                                    <textarea class="form-control" id="menuItems" rows="3" placeholder="Enter menu items"></textarea>
-                                </div>
-                                <div class="col-md-6">
-                                    <label for="menuCost" class="form-label">Total Cost (MAD)</label>
-                                    <input type="number" class="form-control" id="menuCost" min="0" step="0.01" placeholder="Enter total cost">
-                                </div>
-                            </div>
-
-                            <div class="table-responsive">
-                                <table class="table table-striped">
-                                    <thead>
-                                        <tr>
-                                            <th>Week</th>
-                                            <th>Day</th>
-                                            <th>Meal Type</th>
-                                            <th>Expected Employees</th>
-                                            <th>Menu Items</th>
-                                            <th>Total Cost (MAD)</th>
-                                            <th>Cost per Employee (MAD)</th>
-                                            <th>Actions</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody id="menuTableBody">
-                                        <!-- Data will be populated here -->
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Goals & Benchmark Section -->
-                <div id="goals" class="content-section" style="display: none;">
-                    <div class="card">
-                        <div class="card-header">
-                            <i class="bi bi-bullseye"></i> Cost Saving Goals & Benchmark
-                        </div>
-                        <div class="card-body">
-                            <div class="row mb-3">
-                                <div class="col-md-4">
-                                    <label for="goalPeriod" class="form-label">Goal Period</label>
-                                    <select class="form-select" id="goalPeriod">
-                                        <option value="">Choose...</option>
-                                        <option value="Daily">Daily</option>
-                                        <option value="Weekly">Weekly</option>
-                                        <option value="Monthly">Monthly</option>
-                                    </select>
-                                </div>
-                                <div class="col-md-4">
-                                    <label for="goalAmount" class="form-label">Target Food Cost (MAD)</label>
-                                    <input type="number" class="form-control" id="goalAmount" min="0" step="0.01" placeholder="Enter target cost">
-                                </div>
-                                <div class="col-md-4 d-flex align-items-end">
-                                    <button class="btn btn-primary w-100" id="saveGoal">
-                                        <i class="bi bi-save"></i> Set Goal
-                                    </button>
-                                </div>
-                            </div>
-
-                            <div class="row mb-3">
-                                <div class="col-md-12">
-                                    <div class="alert alert-conrad">
-                                        <h5><i class="bi bi-info-circle"></i> Current Goals</h5>
-                                        <div id="currentGoals">
-                                            <!-- Goals will be displayed here -->
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="row mb-3">
-                                <div class="col-md-12">
-                                    <h5>Goal Progress</h5>
-                                    <div id="goalProgress">
-                                        <!-- Progress bars will be displayed here -->
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="row">
-                                <div class="col-md-12">
-                                    <div class="card dashboard-card">
-                                        <div class="card-header">
-                                            <i class="bi bi-graph-up-arrow"></i> Benchmark Performance
-                                        </div>
-                                        <div class="card-body">
-                                            <div class="chart-container">
-                                                <canvas id="benchmarkGoalChart"></canvas>
-                                            </div>
-                                        </div>
+                                        <canvas id="benchmarkGoalChart"></canvas>
                                     </div>
                                 </div>
                             </div>
@@ -990,6 +867,20 @@
             </div>
         </div>
     </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-6">
+                    <p>&copy; 2023 Conrad Rabat Arzana. All rights reserved.</p>
+                </div>
+                <div class="col-md-6 text-end">
+                    <p>Food Cost Management System v1.0 | <a href="#">Support</a></p>
+                </div>
+            </div>
+        </div>
+    </footer>
 
     <!-- Toast Notification -->
     <div class="position-fixed bottom-0 end-0 p-3" style="z-index: 11">
@@ -1005,263 +896,50 @@
         </div>
     </div>
 
-    <!-- IMPORTANT: Bootstrap JS must be loaded at end -->
+    <!-- Edit Modal -->
+    <div class="modal fade" id="editModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Edit Employee Count</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <input type="hidden" id="editId">
+                    <div class="mb-3">
+                        <label for="editDepartment" class="form-label">Department</label>
+                        <input type="text" class="form-control" id="editDepartment" readonly>
+                    </div>
+                    <div class="mb-3">
+                        <label for="editMealType" class="form-label">Meal Type</label>
+                        <select class="form-select" id="editMealType">
+                            <option value="Breakfast">Breakfast</option>
+                            <option value="Lunch">Lunch</option>
+                            <option value="Dinner">Dinner</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label for="editCount" class="form-label">Employee Count</label>
+                        <input type="number" class="form-control" id="editCount" min="1">
+                    </div>
+                    <div class="mb-3">
+                        <label for="editDate" class="form-label">Date</label>
+                        <input type="date" class="form-control" id="editDate">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-primary" id="saveEdit">Save Changes</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    
-    <!-- IMPORTANT: Main application script -->
     <script>
-        // IMPORTANT: This application uses hash routing for Netlify compatibility
-        // and localStorage as fallback for Firebase configuration
-        
-        // Global variables
-        let auth, db, analytics;
-        let currentUser = null;
-        let hotelData = {
-            employees: [],
-            foodCosts: [],
-            meals: [],
-            waste: [],
-            menuPlans: [],
-            goals: {}
-        };
-        
-        // Firebase configuration - Using your provided configuration
-        const firebaseConfig = {
-            apiKey: "AIzaSyDrTpBm3oqShLGnMdRN6gCiPEiTKdba4fI",
-            authDomain: "qanteenforall.firebaseapp.com",
-            projectId: "qanteenforall",
-            storageBucket: "qanteenforall.firebasestorage.app",
-            messagingSenderId: "1071473282986",
-            appId: "1:1071473282986:web:5fad692571792243e125d3",
-            measurementId: "G-EMGM76BCFY"
-        };
-        
         // Initialize the application
         document.addEventListener('DOMContentLoaded', function() {
             try {
-                console.log("Application initializing...");
-                
-                // Check if Firebase config is already saved
-                const savedConfig = localStorage.getItem('firebaseConfig');
-                if (savedConfig) {
-                    firebaseConfig = JSON.parse(savedConfig);
-                }
-                
-                // Initialize Firebase with your configuration
-                initializeFirebase();
-                
-                // Setup hash routing for Netlify compatibility
-                setupHashRouting();
-                
-                // Setup configuration form
-                setupConfigForm();
-                
-                // Setup login form
-                setupLoginForm();
-                
-                // Setup logout button
-                setupLogoutButton();
-                
-                console.log("Application initialized successfully");
-            } catch (error) {
-                console.error("Error initializing application:", error);
-                showToast("Error initializing application: " + error.message, "danger");
-            }
-        });
-        
-        // Setup hash routing
-        function setupHashRouting() {
-            window.addEventListener('hashchange', handleRoute);
-            window.addEventListener('load', handleRoute);
-        }
-        
-        // Handle route changes
-        function handleRoute() {
-            const hash = window.location.hash.substring(1) || 'dashboard';
-            
-            // Hide all sections
-            document.getElementById('loginScreen').style.display = 'none';
-            document.getElementById('mainApp').style.display = 'block';
-            
-            // Show appropriate section
-            if (hash === 'config') {
-                document.getElementById('mainApp').style.display = 'none';
-                document.getElementById('loginScreen').style.display = 'none';
-                document.getElementById('configScreen').style.display = 'block';
-            } else if (hash === 'dashboard' || hash === 'employees' || hash === 'foodcost' || 
-                      hash === 'meals' || hash === 'waste' || hash === 'menu' || hash === 'goals') {
-                if (currentUser) {
-                    document.getElementById('configScreen').style.display = 'none';
-                    document.getElementById('loginScreen').style.display = 'none';
-                    document.getElementById('mainApp').style.display = 'block';
-                    showSection(hash);
-                } else {
-                    window.location.hash = 'login';
-                }
-            }
-            
-            // Update active nav
-            document.querySelectorAll('.nav-link').forEach(navLink => {
-                navLink.classList.remove('active');
-                if (navLink.getAttribute('href') === '#' + hash) {
-                    navLink.classList.add('active');
-                }
-            });
-        }
-        
-        // Setup configuration form
-        function setupConfigForm() {
-            const saveConfigBtn = document.getElementById('saveConfig');
-            
-            if (saveConfigBtn) {
-                saveConfigBtn.addEventListener('click', saveFirebaseConfig);
-            }
-        }
-        
-        // Save Firebase configuration
-        function saveFirebaseConfig() {
-            firebaseConfig = {
-                apiKey: document.getElementById('apiKey').value,
-                authDomain: document.getElementById('authDomain').value,
-                projectId: document.getElementById('projectId').value,
-                storageBucket: document.getElementById('storageBucket').value,
-                messagingSenderId: document.getElementById('messagingSenderId').value,
-                appId: document.getElementById('appId').value,
-                measurementId: document.getElementById('measurementId').value
-            };
-            
-            // Save to localStorage
-            localStorage.setItem('firebaseConfig', JSON.stringify(firebaseConfig));
-            
-            // Reinitialize Firebase with new config
-            initializeFirebase();
-            
-            // Redirect to login
-            window.location.hash = 'login';
-            
-            showToast('Firebase configuration saved successfully', 'success');
-        }
-        
-        // Initialize Firebase
-        function initializeFirebase() {
-            try {
-                firebase.initializeApp(firebaseConfig);
-                auth = firebase.auth();
-                db = firebase.firestore();
-                
-                // Initialize analytics
-                analytics = firebase.analytics();
-                
-                // Check if user is already logged in
-                auth.onAuthStateChanged(user => {
-                    if (user) {
-                        currentUser = user;
-                        document.getElementById('userEmail').textContent = user.email;
-                        initializeApp();
-                    } else {
-                        window.location.hash = 'login';
-                    }
-                });
-                
-                console.log("Firebase initialized successfully");
-            } catch (error) {
-                console.error("Error initializing Firebase:", error);
-                showToast("Error initializing Firebase: " + error.message, "danger");
-            }
-        }
-        
-        // Setup login form
-        function setupLoginForm() {
-            const loginForm = document.getElementById('loginForm');
-            
-            if (loginForm) {
-                loginForm.addEventListener('submit', handleLogin);
-            }
-        }
-        
-        // Handle login
-        function handleLogin(e) {
-            e.preventDefault();
-            const email = document.getElementById('email').value;
-            const password = document.getElementById('password').value;
-            const loginError = document.getElementById('loginError');
-            
-            if (auth) {
-                auth.signInWithEmailAndPassword(email, password)
-                    .then(userCredential => {
-                        // Login successful
-                        loginError.style.display = 'none';
-                        window.location.hash = 'dashboard';
-                        
-                        // Log analytics event
-                        analytics.logEvent('login', {
-                            method: 'email',
-                            user_id: userCredential.user.uid
-                        });
-                    })
-                    .catch(error => {
-                        // Login failed
-                        loginError.textContent = error.message;
-                        loginError.style.display = 'block';
-                        
-                        // Log analytics event
-                        analytics.logEvent('login_failed', {
-                            method: 'email',
-                            error: error.message
-                        });
-                    });
-            } else {
-                // Local storage fallback
-                if (email && password) {
-                    currentUser = { email: email };
-                    document.getElementById('userEmail').textContent = currentUser.email;
-                    window.location.hash = 'dashboard';
-                } else {
-                    loginError.textContent = 'Please enter email and password';
-                    loginError.style.display = 'block';
-                }
-            }
-        }
-        
-        // Setup logout button
-        function setupLogoutButton() {
-            const logoutBtn = document.getElementById('logoutBtn');
-            
-            if (logoutBtn) {
-                logoutBtn.addEventListener('click', handleLogout);
-            }
-        }
-        
-        // Handle logout
-        function handleLogout() {
-            if (auth) {
-                auth.signOut().then(() => {
-                    // Logout successful
-                    window.location.hash = 'login';
-                    
-                    // Log analytics event
-                    analytics.logEvent('logout', {
-                        method: 'manual'
-                    });
-                }).catch(error => {
-                    console.error("Error signing out:", error);
-                    showToast("Error signing out: " + error.message, "danger");
-                });
-            } else {
-                // Local storage fallback
-                currentUser = null;
-                window.location.hash = 'login';
-            }
-        }
-        
-        // Initialize main application after login
-        function initializeApp() {
-            try {
-                // Show main app
-                document.getElementById('configScreen').style.display = 'none';
-                document.getElementById('loginScreen').style.display = 'none';
-                document.getElementById('mainApp').style.display = 'block';
-                
                 // Set today's date as default for all date inputs
                 const today = new Date().toISOString().split('T')[0];
                 document.getElementById('costDate').value = today;
@@ -1274,8 +952,11 @@
                 currentWeekStart.setDate(currentWeekStart.getDate() - currentWeekStart.getDay() + 1);
                 document.getElementById('weekStart').value = currentWeekStart.toISOString().split('T')[0];
 
-                // Load data
-                loadDataFromFirestore();
+                // Initialize data storage
+                initializeDataStorage();
+                
+                // Load all data
+                loadAllData();
                 
                 // Setup event listeners
                 setupEventListeners();
@@ -1286,88 +967,56 @@
                 // Update dashboard
                 updateDashboard();
                 
-                // Log analytics event
-                analytics.logEvent('app_loaded', {
-                    user_id: currentUser ? currentUser.uid : null
-                });
-                
                 console.log("Application initialized successfully");
             } catch (error) {
                 console.error("Error initializing application:", error);
                 showToast("Error initializing application: " + error.message, "danger");
             }
-        }
-        
-        // Load data from Firestore
-        function loadDataFromFirestore() {
-            showLoading(true);
-            
-            if (!db) return;
-            
-            // Get main document
-            db.collection("hotelData").doc("main").get()
-                .then(doc => {
-                    if (doc.exists) {
-                        hotelData = doc.data();
-                    } else {
-                        // Create initial document if it doesn't exist
-                        db.collection("hotelData").doc("main").set(hotelData);
-                    }
-                    
-                    // Load all data
-                    loadAllData();
-                    showLoading(false);
-                })
-                .catch(error => {
-                    console.error("Error loading data from Firestore:", error);
-                    showToast("Error loading data: " + error.message, "danger");
-                    showLoading(false);
-                });
-        }
-        
-        // Save data to Firestore
-        function saveDataToFirestore() {
-            if (!db) {
-                // Fallback to localStorage
-                localStorage.setItem('hotelData', JSON.stringify(hotelData));
-                return;
+        });
+
+        // Initialize data storage if not exists
+        function initializeDataStorage() {
+            try {
+                if (!localStorage.getItem('hotelData')) {
+                    const initialData = {
+                        employees: [],
+                        foodCosts: [],
+                        meals: [],
+                        waste: [],
+                        menuPlans: [],
+                        goals: {}
+                    };
+                    localStorage.setItem('hotelData', JSON.stringify(initialData));
+                    console.log("Initial data storage created");
+                }
+            } catch (error) {
+                console.error("Error initializing data storage:", error);
+                showToast("Error initializing data storage: " + error.message, "danger");
             }
-            
-            db.collection("hotelData").doc("main").set(hotelData)
-                .then(() => {
-                    console.log("Data saved to Firestore successfully");
-                    
-                    // Log analytics event
-                    analytics.logEvent('data_saved', {
-                        user_id: currentUser ? currentUser.uid : null
-                    });
-                })
-                .catch(error => {
-                    console.error("Error saving data to Firestore:", error);
-                    showToast("Error saving data: " + error.message, "danger");
-                });
         }
-        
-        // Load all data from hotelData
+
+        // Load all data from localStorage
         function loadAllData() {
             try {
+                const data = JSON.parse(localStorage.getItem('hotelData'));
+                
                 // Load employee counts
-                loadEmployeeCounts(hotelData.employees);
+                loadEmployeeCounts(data.employees);
                 
                 // Load food costs
-                loadFoodCosts(hotelData.foodCosts);
+                loadFoodCosts(data.foodCosts);
                 
                 // Load meals
-                loadMeals(hotelData.meals);
+                loadMeals(data.meals);
                 
                 // Load waste
-                loadWaste(hotelData.waste);
+                loadWaste(data.waste);
                 
                 // Load menu plans
-                loadMenuPlans(hotelData.menuPlans);
+                loadMenuPlans(data.menuPlans);
                 
                 // Load goals
-                loadGoals(hotelData.goals);
+                loadGoals(data.goals);
                 
                 console.log("All data loaded successfully");
             } catch (error) {
@@ -1375,7 +1024,7 @@
                 showToast("Error loading data: " + error.message, "danger");
             }
         }
-        
+
         // Setup event listeners
         function setupEventListeners() {
             try {
@@ -1383,10 +1032,14 @@
                 document.querySelectorAll('.nav-link').forEach(link => {
                     link.addEventListener('click', function(e) {
                         e.preventDefault();
-                        const section = this.getAttribute('href').substring(1);
-                        if (section) {
-                            window.location.hash = section;
-                        }
+                        const section = this.getAttribute('data-section');
+                        showSection(section);
+                        
+                        // Update active nav
+                        document.querySelectorAll('.nav-link').forEach(navLink => {
+                            navLink.classList.remove('active');
+                        });
+                        this.classList.add('active');
                     });
                 });
 
@@ -1408,13 +1061,16 @@
                 // Goals
                 document.getElementById('saveGoal').addEventListener('click', saveGoal);
 
+                // Edit modal save
+                document.getElementById('saveEdit').addEventListener('click', saveEmployeeEdit);
+                
                 console.log("Event listeners setup successfully");
             } catch (error) {
                 console.error("Error setting up event listeners:", error);
                 showToast("Error setting up event listeners: " + error.message, "danger");
             }
         }
-        
+
         // Show specific section
         function showSection(sectionId) {
             try {
@@ -1428,19 +1084,13 @@
                     updateDashboard();
                 }
                 
-                // Log analytics event
-                analytics.logEvent('section_viewed', {
-                    section_name: sectionId,
-                    user_id: currentUser ? currentUser.uid : null
-                });
-                
                 console.log("Section displayed:", sectionId);
             } catch (error) {
                 console.error("Error showing section:", error);
                 showToast("Error showing section: " + error.message, "danger");
             }
         }
-        
+
         // Save employee count
         function saveEmployeeCount() {
             try {
@@ -1454,16 +1104,17 @@
                     return;
                 }
                 
+                const data = JSON.parse(localStorage.getItem('hotelData'));
                 const newEmployee = {
-                    id: Date.now().toString(),
+                    id: Date.now(),
                     department: department,
                     mealType: mealType,
                     count: parseInt(count),
                     date: date
                 };
                 
-                hotelData.employees.push(newEmployee);
-                saveDataToFirestore();
+                data.employees.push(newEmployee);
+                localStorage.setItem('hotelData', JSON.stringify(data));
                 
                 // Clear form
                 document.getElementById('departmentSelect').value = '';
@@ -1471,15 +1122,8 @@
                 document.getElementById('employeeCount').value = '';
                 
                 // Reload data
-                loadEmployeeCounts(hotelData.employees);
+                loadEmployeeCounts(data.employees);
                 updateDashboard();
-                
-                // Log analytics event
-                analytics.logEvent('employee_count_saved', {
-                    department: department,
-                    meal_type: mealType,
-                    user_id: currentUser ? currentUser.uid : null
-                });
                 
                 showToast('Employee count saved successfully', 'success');
                 console.log("Employee count saved successfully");
@@ -1488,7 +1132,7 @@
                 showToast("Error saving employee count: " + error.message, "danger");
             }
         }
-        
+
         // Load employee counts
         function loadEmployeeCounts(employees) {
             try {
@@ -1506,10 +1150,10 @@
                         <td>${emp.mealType}</td>
                         <td>${emp.count}</td>
                         <td>
-                            <button class="btn btn-sm btn-outline-primary me-1" onclick="editEmployee('${emp.id}')">
+                            <button class="btn btn-sm btn-outline-primary me-1" onclick="editEmployee(${emp.id})">
                                 <i class="bi bi-pencil"></i>
                             </button>
-                            <button class="btn btn-sm btn-outline-danger" onclick="deleteEmployee('${emp.id}')">
+                            <button class="btn btn-sm btn-outline-danger" onclick="deleteEmployee(${emp.id})">
                                 <i class="bi bi-trash"></i>
                             </button>
                         </td>
@@ -1526,7 +1170,7 @@
                 showToast("Error loading employee counts: " + error.message, "danger");
             }
         }
-        
+
         // Update meal summaries
         function updateMealSummaries(employees) {
             try {
@@ -1555,74 +1199,21 @@
                 showToast("Error updating meal summaries: " + error.message, "danger");
             }
         }
-        
+
         // Edit employee
         function editEmployee(id) {
             try {
-                const employee = hotelData.employees.find(emp => emp.id === id);
+                const data = JSON.parse(localStorage.getItem('hotelData'));
+                const employee = data.employees.find(emp => emp.id === id);
                 
                 if (employee) {
-                    // Create edit modal dynamically if it doesn't exist
-                    let editModal = document.getElementById('editModal');
-                    if (!editModal) {
-                        editModal = document.createElement('div');
-                        editModal.className = 'modal fade';
-                        editModal.id = 'editModal';
-                        editModal.tabIndex = '-1';
-                        editModal.setAttribute('aria-labelledby', 'editModalLabel');
-                        editModal.setAttribute('aria-hidden', 'true');
-                        
-                        editModal.innerHTML = `
-                            <div class="modal-dialog">
-                                <div class="modal-content">
-                                    <div class="modal-header">
-                                        <h5 class="modal-title" id="editModalLabel">Edit Employee Count</h5>
-                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                                    </div>
-                                    <div class="modal-body">
-                                        <input type="hidden" id="editId">
-                                        <div class="mb-3">
-                                            <label for="editDepartment" class="form-label">Department</label>
-                                            <input type="text" class="form-control" id="editDepartment" readonly>
-                                        </div>
-                                        <div class="mb-3">
-                                            <label for="editMealType" class="form-label">Meal Type</label>
-                                            <select class="form-select" id="editMealType">
-                                                <option value="Breakfast">Breakfast</option>
-                                                <option value="Lunch">Lunch</option>
-                                                <option value="Dinner">Dinner</option>
-                                            </select>
-                                        </div>
-                                        <div class="mb-3">
-                                            <label for="editCount" class="form-label">Employee Count</label>
-                                            <input type="number" class="form-control" id="editCount" min="1">
-                                        </div>
-                                        <div class="mb-3">
-                                            <label for="editDate" class="form-label">Date</label>
-                                            <input type="date" class="form-control" id="editDate">
-                                        </div>
-                                    </div>
-                                    <div class="modal-footer">
-                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                                        <button type="button" class="btn btn-primary" id="saveEdit">Save Changes</button>
-                                    </div>
-                                </div>
-                            </div>
-                        `;
-                        
-                        document.body.appendChild(editModal);
-                        
-                        // Setup save button event
-                        document.getElementById('saveEdit').addEventListener('click', saveEmployeeEdit);
-                    }
-                    
                     document.getElementById('editId').value = employee.id;
                     document.getElementById('editDepartment').value = employee.department;
                     document.getElementById('editMealType').value = employee.mealType;
                     document.getElementById('editCount').value = employee.count;
                     document.getElementById('editDate').value = employee.date;
                     
-                    const modal = new bootstrap.Modal(editModal);
+                    const modal = new bootstrap.Modal(document.getElementById('editModal'));
                     modal.show();
                 }
                 
@@ -1632,35 +1223,31 @@
                 showToast("Error editing employee: " + error.message, "danger");
             }
         }
-        
+
         // Save employee edit
         function saveEmployeeEdit() {
             try {
-                const id = document.getElementById('editId').value;
+                const id = parseInt(document.getElementById('editId').value);
                 const mealType = document.getElementById('editMealType').value;
                 const count = parseInt(document.getElementById('editCount').value);
                 const date = document.getElementById('editDate').value;
                 
-                const employeeIndex = hotelData.employees.findIndex(emp => emp.id === id);
+                const data = JSON.parse(localStorage.getItem('hotelData'));
+                const employeeIndex = data.employees.findIndex(emp => emp.id === id);
                 
                 if (employeeIndex !== -1) {
-                    hotelData.employees[employeeIndex].mealType = mealType;
-                    hotelData.employees[employeeIndex].count = count;
-                    hotelData.employees[employeeIndex].date = date;
+                    data.employees[employeeIndex].mealType = mealType;
+                    data.employees[employeeIndex].count = count;
+                    data.employees[employeeIndex].date = date;
                     
-                    saveDataToFirestore();
+                    localStorage.setItem('hotelData', JSON.stringify(data));
                     
                     // Close modal
                     bootstrap.Modal.getInstance(document.getElementById('editModal')).hide();
                     
                     // Reload data
-                    loadEmployeeCounts(hotelData.employees);
+                    loadEmployeeCounts(data.employees);
                     updateDashboard();
-                    
-                    // Log analytics event
-                    analytics.logEvent('employee_count_updated', {
-                        user_id: currentUser ? currentUser.uid : null
-                    });
                     
                     showToast('Employee count updated successfully', 'success');
                     console.log("Employee edit saved successfully");
@@ -1670,21 +1257,16 @@
                 showToast("Error saving employee edit: " + error.message, "danger");
             }
         }
-        
+
         // Delete employee
         function deleteEmployee(id) {
             try {
                 if (confirm('Are you sure you want to delete this employee count record?')) {
-                    hotelData.employees = hotelData.employees.filter(emp => emp.id !== id);
-                    saveDataToFirestore();
-                    loadEmployeeCounts(hotelData.employees);
+                    const data = JSON.parse(localStorage.getItem('hotelData'));
+                    data.employees = data.employees.filter(emp => emp.id !== id);
+                    localStorage.setItem('hotelData', JSON.stringify(data));
+                    loadEmployeeCounts(data.employees);
                     updateDashboard();
-                    
-                    // Log analytics event
-                    analytics.logEvent('employee_count_deleted', {
-                        user_id: currentUser ? currentUser.uid : null
-                    });
-                    
                     showToast('Employee count deleted', 'info');
                     console.log("Employee deleted successfully, ID:", id);
                 }
@@ -1693,7 +1275,7 @@
                 showToast("Error deleting employee: " + error.message, "danger");
             }
         }
-        
+
         // Save food cost
         function saveFoodCost() {
             try {
@@ -1706,29 +1288,23 @@
                     return;
                 }
                 
-                const newCost = {
-                    id: Date.now().toString(),
+                const data = JSON.parse(localStorage.getItem('hotelData'));
+                data.foodCosts.push({
+                    id: Date.now(),
                     date: date,
                     mealType: mealType,
                     cost: parseFloat(cost)
-                };
+                });
                 
-                hotelData.foodCosts.push(newCost);
-                saveDataToFirestore();
+                localStorage.setItem('hotelData', JSON.stringify(data));
                 
                 // Clear form
                 document.getElementById('costMealType').value = '';
                 document.getElementById('foodCost').value = '';
                 
                 // Reload data
-                loadFoodCosts(hotelData.foodCosts);
+                loadFoodCosts(data.foodCosts);
                 updateDashboard();
-                
-                // Log analytics event
-                analytics.logEvent('food_cost_saved', {
-                    meal_type: mealType,
-                    user_id: currentUser ? currentUser.uid : null
-                });
                 
                 showToast('Food cost saved successfully', 'success');
                 console.log("Food cost saved successfully");
@@ -1737,7 +1313,7 @@
                 showToast("Error saving food cost: " + error.message, "danger");
             }
         }
-        
+
         // Load food costs
         function loadFoodCosts(foodCosts) {
             try {
@@ -1754,7 +1330,7 @@
                         <td>${cost.mealType}</td>
                         <td>${cost.cost.toFixed(2)} MAD</td>
                         <td>
-                            <button class="btn btn-sm btn-outline-danger" onclick="deleteFoodCost('${cost.id}')">
+                            <button class="btn btn-sm btn-outline-danger" onclick="deleteFoodCost(${cost.id})">
                                 <i class="bi bi-trash"></i>
                             </button>
                         </td>
@@ -1768,21 +1344,16 @@
                 showToast("Error loading food costs: " + error.message, "danger");
             }
         }
-        
+
         // Delete food cost
         function deleteFoodCost(id) {
             try {
                 if (confirm('Are you sure you want to delete this food cost record?')) {
-                    hotelData.foodCosts = hotelData.foodCosts.filter(cost => cost.id !== id);
-                    saveDataToFirestore();
-                    loadFoodCosts(hotelData.foodCosts);
+                    const data = JSON.parse(localStorage.getItem('hotelData'));
+                    data.foodCosts = data.foodCosts.filter(cost => cost.id !== id);
+                    localStorage.setItem('hotelData', JSON.stringify(data));
+                    loadFoodCosts(data.foodCosts);
                     updateDashboard();
-                    
-                    // Log analytics event
-                    analytics.logEvent('food_cost_deleted', {
-                        user_id: currentUser ? currentUser.uid : null
-                    });
-                    
                     showToast('Food cost deleted', 'info');
                     console.log("Food cost deleted successfully, ID:", id);
                 }
@@ -1791,7 +1362,7 @@
                 showToast("Error deleting food cost: " + error.message, "danger");
             }
         }
-        
+
         // Save meal
         function saveMeal() {
             try {
@@ -1806,18 +1377,18 @@
                     return;
                 }
                 
-                const newMeal = {
-                    id: Date.now().toString(),
+                const data = JSON.parse(localStorage.getItem('hotelData'));
+                data.meals.push({
+                    id: Date.now(),
                     date: date,
                     mealType: mealType,
                     item: item,
                     cost: parseFloat(cost),
                     quantity: parseInt(quantity),
                     totalCost: parseFloat(cost) * parseInt(quantity)
-                };
+                });
                 
-                hotelData.meals.push(newMeal);
-                saveDataToFirestore();
+                localStorage.setItem('hotelData', JSON.stringify(data));
                 
                 // Clear form
                 document.getElementById('mealType').value = '';
@@ -1826,14 +1397,8 @@
                 document.getElementById('mealQuantity').value = '';
                 
                 // Reload data
-                loadMeals(hotelData.meals);
+                loadMeals(data.meals);
                 updateDashboard();
-                
-                // Log analytics event
-                analytics.logEvent('meal_saved', {
-                    meal_type: mealType,
-                    user_id: currentUser ? currentUser.uid : null
-                });
                 
                 showToast('Meal saved successfully', 'success');
                 console.log("Meal saved successfully");
@@ -1842,7 +1407,7 @@
                 showToast("Error saving meal: " + error.message, "danger");
             }
         }
-        
+
         // Load meals
         function loadMeals(meals) {
             try {
@@ -1862,7 +1427,7 @@
                         <td>${meal.quantity}</td>
                         <td>${meal.totalCost.toFixed(2)} MAD</td>
                         <td>
-                            <button class="btn btn-sm btn-outline-danger" onclick="deleteMeal('${meal.id}')">
+                            <button class="btn btn-sm btn-outline-danger" onclick="deleteMeal(${meal.id})">
                                 <i class="bi bi-trash"></i>
                             </button>
                         </td>
@@ -1876,21 +1441,16 @@
                 showToast("Error loading meals: " + error.message, "danger");
             }
         }
-        
+
         // Delete meal
         function deleteMeal(id) {
             try {
                 if (confirm('Are you sure you want to delete this meal record?')) {
-                    hotelData.meals = hotelData.meals.filter(meal => meal.id !== id);
-                    saveDataToFirestore();
-                    loadMeals(hotelData.meals);
+                    const data = JSON.parse(localStorage.getItem('hotelData'));
+                    data.meals = data.meals.filter(meal => meal.id !== id);
+                    localStorage.setItem('hotelData', JSON.stringify(data));
+                    loadMeals(data.meals);
                     updateDashboard();
-                    
-                    // Log analytics event
-                    analytics.logEvent('meal_deleted', {
-                        user_id: currentUser ? currentUser.uid : null
-                    });
-                    
                     showToast('Meal deleted', 'info');
                     console.log("Meal deleted successfully, ID:", id);
                 }
@@ -1899,7 +1459,7 @@
                 showToast("Error deleting meal: " + error.message, "danger");
             }
         }
-        
+
         // Save waste
         function saveWaste() {
             try {
@@ -1915,30 +1475,24 @@
                 // Estimate cost (using 50 MAD per kg as a rough estimate)
                 const estimatedCost = parseFloat(amount) * 50;
                 
-                const newWaste = {
-                    id: Date.now().toString(),
+                const data = JSON.parse(localStorage.getItem('hotelData'));
+                data.waste.push({
+                    id: Date.now(),
                     date: date,
                     mealType: mealType,
                     amount: parseFloat(amount),
                     estimatedCost: estimatedCost
-                };
+                });
                 
-                hotelData.waste.push(newWaste);
-                saveDataToFirestore();
+                localStorage.setItem('hotelData', JSON.stringify(data));
                 
                 // Clear form
                 document.getElementById('wasteMealType').value = '';
                 document.getElementById('wasteAmount').value = '';
                 
                 // Reload data
-                loadWaste(hotelData.waste);
+                loadWaste(data.waste);
                 updateDashboard();
-                
-                // Log analytics event
-                analytics.logEvent('waste_saved', {
-                    meal_type: mealType,
-                    user_id: currentUser ? currentUser.uid : null
-                });
                 
                 showToast('Waste record saved successfully', 'success');
                 console.log("Waste record saved successfully");
@@ -1947,7 +1501,7 @@
                 showToast("Error saving waste: " + error.message, "danger");
             }
         }
-        
+
         // Load waste
         function loadWaste(waste) {
             try {
@@ -1965,7 +1519,7 @@
                         <td>${wasteItem.amount.toFixed(2)} kg</td>
                         <td>${wasteItem.estimatedCost.toFixed(2)} MAD</td>
                         <td>
-                            <button class="btn btn-sm btn-outline-danger" onclick="deleteWaste('${wasteItem.id}')">
+                            <button class="btn btn-sm btn-outline-danger" onclick="deleteWaste(${wasteItem.id})">
                                 <i class="bi bi-trash"></i>
                             </button>
                         </td>
@@ -1979,21 +1533,16 @@
                 showToast("Error loading waste data: " + error.message, "danger");
             }
         }
-        
+
         // Delete waste
         function deleteWaste(id) {
             try {
                 if (confirm('Are you sure you want to delete this waste record?')) {
-                    hotelData.waste = hotelData.waste.filter(wasteItem => wasteItem.id !== id);
-                    saveDataToFirestore();
-                    loadWaste(hotelData.waste);
+                    const data = JSON.parse(localStorage.getItem('hotelData'));
+                    data.waste = data.waste.filter(wasteItem => wasteItem.id !== id);
+                    localStorage.setItem('hotelData', JSON.stringify(data));
+                    loadWaste(data.waste);
                     updateDashboard();
-                    
-                    // Log analytics event
-                    analytics.logEvent('waste_deleted', {
-                        user_id: currentUser ? currentUser.uid : null
-                    });
-                    
                     showToast('Waste record deleted', 'info');
                     console.log("Waste record deleted successfully, ID:", id);
                 }
@@ -2002,7 +1551,7 @@
                 showToast("Error deleting waste record: " + error.message, "danger");
             }
         }
-        
+
         // Save menu plan
         function saveMenuPlan() {
             try {
@@ -2020,8 +1569,9 @@
                 
                 const costPerEmployee = parseFloat(totalCost) / parseInt(expectedEmployees);
                 
-                const newMenuPlan = {
-                    id: Date.now().toString(),
+                const data = JSON.parse(localStorage.getItem('hotelData'));
+                data.menuPlans.push({
+                    id: Date.now(),
                     weekStart: weekStart,
                     day: day,
                     mealType: mealType,
@@ -2029,10 +1579,9 @@
                     menuItems: menuItems.split('\n').filter(item => item.trim()),
                     totalCost: parseFloat(totalCost),
                     costPerEmployee: costPerEmployee
-                };
+                });
                 
-                hotelData.menuPlans.push(newMenuPlan);
-                saveDataToFirestore();
+                localStorage.setItem('hotelData', JSON.stringify(data));
                 
                 // Clear form
                 document.getElementById('menuDay').value = '';
@@ -2042,14 +1591,8 @@
                 document.getElementById('menuCost').value = '';
                 
                 // Reload data
-                loadMenuPlans(hotelData.menuPlans);
+                loadMenuPlans(data.menuPlans);
                 updateDashboard();
-                
-                // Log analytics event
-                analytics.logEvent('menu_plan_saved', {
-                    meal_type: mealType,
-                    user_id: currentUser ? currentUser.uid : null
-                });
                 
                 showToast('Menu plan saved successfully', 'success');
                 console.log("Menu plan saved successfully");
@@ -2058,7 +1601,7 @@
                 showToast("Error saving menu plan: " + error.message, "danger");
             }
         }
-        
+
         // Load menu plans
         function loadMenuPlans(menuPlans) {
             try {
@@ -2079,7 +1622,7 @@
                         <td>${plan.totalCost.toFixed(2)} MAD</td>
                         <td>${plan.costPerEmployee.toFixed(2)} MAD</td>
                         <td>
-                            <button class="btn btn-sm btn-outline-danger" onclick="deleteMenuPlan('${plan.id}')">
+                            <button class="btn btn-sm btn-outline-danger" onclick="deleteMenuPlan(${plan.id})">
                                 <i class="bi bi-trash"></i>
                             </button>
                         </td>
@@ -2093,21 +1636,16 @@
                 showToast("Error loading menu plans: " + error.message, "danger");
             }
         }
-        
+
         // Delete menu plan
         function deleteMenuPlan(id) {
             try {
                 if (confirm('Are you sure you want to delete this menu plan?')) {
-                    hotelData.menuPlans = hotelData.menuPlans.filter(plan => plan.id !== id);
-                    saveDataToFirestore();
-                    loadMenuPlans(hotelData.menuPlans);
+                    const data = JSON.parse(localStorage.getItem('hotelData'));
+                    data.menuPlans = data.menuPlans.filter(plan => plan.id !== id);
+                    localStorage.setItem('hotelData', JSON.stringify(data));
+                    loadMenuPlans(data.menuPlans);
                     updateDashboard();
-                    
-                    // Log analytics event
-                    analytics.logEvent('menu_plan_deleted', {
-                        user_id: currentUser ? currentUser.uid : null
-                    });
-                    
                     showToast('Menu plan deleted', 'info');
                     console.log("Menu plan deleted successfully, ID:", id);
                 }
@@ -2116,7 +1654,7 @@
                 showToast("Error deleting menu plan: " + error.message, "danger");
             }
         }
-        
+
         // Save goal
         function saveGoal() {
             try {
@@ -2128,26 +1666,21 @@
                     return;
                 }
                 
-                hotelData.goals[period] = {
+                const data = JSON.parse(localStorage.getItem('hotelData'));
+                data.goals[period] = {
                     target: parseFloat(amount),
                     setOn: new Date().toISOString()
                 };
                 
-                saveDataToFirestore();
+                localStorage.setItem('hotelData', JSON.stringify(data));
                 
                 // Clear form
                 document.getElementById('goalPeriod').value = '';
                 document.getElementById('goalAmount').value = '';
                 
                 // Reload data
-                loadGoals(hotelData.goals);
+                loadGoals(data.goals);
                 updateDashboard();
-                
-                // Log analytics event
-                analytics.logEvent('goal_set', {
-                    period: period,
-                    user_id: currentUser ? currentUser.uid : null
-                });
                 
                 showToast('Goal set successfully', 'success');
                 console.log("Goal saved successfully");
@@ -2156,7 +1689,7 @@
                 showToast("Error saving goal: " + error.message, "danger");
             }
         }
-        
+
         // Load goals
         function loadGoals(goals) {
             try {
@@ -2182,19 +1715,21 @@
                 showToast("Error loading goals: " + error.message, "danger");
             }
         }
-        
+
         // Update goal progress
         function updateGoalProgress(goals) {
             try {
                 const progressDiv = document.getElementById('goalProgress');
                 progressDiv.innerHTML = '';
                 
+                const data = JSON.parse(localStorage.getItem('hotelData'));
+                
                 for (const [period, goal] of Object.entries(goals)) {
                     let currentCost = 0;
                     
                     if (period === 'Daily') {
                         const today = new Date().toISOString().split('T')[0];
-                        currentCost = hotelData.foodCosts
+                        currentCost = data.foodCosts
                             .filter(cost => cost.date === today)
                             .reduce((sum, cost) => sum + cost.cost, 0);
                     } else if (period === 'Weekly') {
@@ -2202,7 +1737,7 @@
                         weekStart.setDate(weekStart.getDate() - weekStart.getDay() + 1);
                         const weekStartStr = weekStart.toISOString().split('T')[0];
                         
-                        currentCost = hotelData.foodCosts
+                        currentCost = data.foodCosts
                             .filter(cost => cost.date >= weekStartStr)
                             .reduce((sum, cost) => sum + cost.cost, 0);
                     } else if (period === 'Monthly') {
@@ -2210,7 +1745,7 @@
                         monthStart.setDate(1);
                         const monthStartStr = monthStart.toISOString().split('T')[0];
                         
-                        currentCost = hotelData.foodCosts
+                        currentCost = data.foodCosts
                             .filter(cost => cost.date >= monthStartStr)
                             .reduce((sum, cost) => sum + cost.cost, 0);
                     }
@@ -2240,7 +1775,7 @@
                 showToast("Error updating goal progress: " + error.message, "danger");
             }
         }
-        
+
         // Initialize charts
         let dailyCostChart, mealTypeChart, benchmarkChart, benchmarkGoalChart;
 
@@ -2365,18 +1900,20 @@
                 showToast("Error initializing charts: " + error.message, "danger");
             }
         }
-        
+
         // Update dashboard
         function updateDashboard() {
             try {
+                const data = JSON.parse(localStorage.getItem('hotelData'));
+                
                 // Update stats
-                updateStats();
+                updateStats(data);
                 
                 // Update charts
-                updateDailyCostChart();
-                updateMealTypeChart();
-                updateBenchmarkChart();
-                updateBenchmarkGoalChart();
+                updateDailyCostChart(data.foodCosts);
+                updateMealTypeChart(data.foodCosts);
+                updateBenchmarkChart(data.foodCosts, data.goals);
+                updateBenchmarkGoalChart(data.foodCosts, data.goals);
                 
                 console.log("Dashboard updated successfully");
             } catch (error) {
@@ -2384,13 +1921,13 @@
                 showToast("Error updating dashboard: " + error.message, "danger");
             }
         }
-        
+
         // Update stats
-        function updateStats() {
+        function updateStats(data) {
             try {
                 // Total employees
                 const today = new Date().toISOString().split('T')[0];
-                const todayEmployees = hotelData.employees.filter(emp => emp.date === today);
+                const todayEmployees = data.employees.filter(emp => emp.date === today);
                 
                 let totalEmployees = 0;
                 for (const emp of todayEmployees) {
@@ -2399,7 +1936,7 @@
                 document.getElementById('totalEmployees').textContent = totalEmployees;
                 
                 // Today's food cost
-                const todayCost = hotelData.foodCosts
+                const todayCost = data.foodCosts
                     .filter(cost => cost.date === today)
                     .reduce((sum, cost) => sum + cost.cost, 0);
                 document.getElementById('todayFoodCost').textContent = `${todayCost.toFixed(2)} MAD`;
@@ -2409,7 +1946,7 @@
                 weekStart.setDate(weekStart.getDate() - weekStart.getDay() + 1);
                 const weekStartStr = weekStart.toISOString().split('T')[0];
                 
-                const weeklyCosts = hotelData.foodCosts
+                const weeklyCosts = data.foodCosts
                     .filter(cost => cost.date >= weekStartStr)
                     .reduce((sum, cost) => sum + cost.cost, 0);
                 
@@ -2417,10 +1954,10 @@
                 document.getElementById('weeklyAverage').textContent = `${weeklyAverage.toFixed(2)} MAD`;
                 
                 // Waste percentage
-                const totalMealCost = hotelData.meals
+                const totalMealCost = data.meals
                     .reduce((sum, meal) => sum + meal.totalCost, 0);
                 
-                const totalWasteCost = hotelData.waste
+                const totalWasteCost = data.waste
                     .reduce((sum, waste) => sum + waste.estimatedCost, 0);
                 
                 const wastePercentage = totalMealCost > 0 ? (totalWasteCost / totalMealCost) * 100 : 0;
@@ -2432,13 +1969,13 @@
                 showToast("Error updating stats: " + error.message, "danger");
             }
         }
-        
+
         // Update daily cost chart
-        function updateDailyCostChart() {
+        function updateDailyCostChart(foodCosts) {
             try {
                 // Group costs by date
                 const costsByDate = {};
-                hotelData.foodCosts.forEach(cost => {
+                foodCosts.forEach(cost => {
                     if (!costsByDate[cost.date]) {
                         costsByDate[cost.date] = 0;
                     }
@@ -2463,9 +2000,9 @@
                 showToast("Error updating daily cost chart: " + error.message, "danger");
             }
         }
-        
+
         // Update meal type chart
-        function updateMealTypeChart() {
+        function updateMealTypeChart(foodCosts) {
             try {
                 // Group costs by meal type
                 const costsByMealType = {
@@ -2474,7 +2011,7 @@
                     'Dinner': 0
                 };
                 
-                hotelData.foodCosts.forEach(cost => {
+                foodCosts.forEach(cost => {
                     if (costsByMealType.hasOwnProperty(cost.mealType)) {
                         costsByMealType[cost.mealType] += cost.cost;
                     }
@@ -2490,13 +2027,13 @@
                 showToast("Error updating meal type chart: " + error.message, "danger");
             }
         }
-        
+
         // Update benchmark chart
-        function updateBenchmarkChart() {
+        function updateBenchmarkChart(foodCosts, goals) {
             try {
                 // Group costs by week
                 const costsByWeek = {};
-                hotelData.foodCosts.forEach(cost => {
+                foodCosts.forEach(cost => {
                     const date = new Date(cost.date);
                     const weekStart = new Date(date);
                     weekStart.setDate(date.getDate() - date.getDay() + 1);
@@ -2516,7 +2053,7 @@
                 const last4WeeksCosts = last4Weeks.map(week => costsByWeek[week]);
                 
                 // Get weekly goal
-                const weeklyGoal = hotelData.goals.Weekly ? hotelData.goals.Weekly.target : 0;
+                const weeklyGoal = goals.Weekly ? goals.Weekly.target : 0;
                 const weeklyGoals = last4Weeks.map(() => weeklyGoal);
                 
                 // Update chart
@@ -2534,13 +2071,13 @@
                 showToast("Error updating benchmark chart: " + error.message, "danger");
             }
         }
-        
+
         // Update benchmark goal chart
-        function updateBenchmarkGoalChart() {
+        function updateBenchmarkGoalChart(foodCosts, goals) {
             try {
                 // Group costs by date
                 const costsByDate = {};
-                hotelData.foodCosts.forEach(cost => {
+                foodCosts.forEach(cost => {
                     if (!costsByDate[cost.date]) {
                         costsByDate[cost.date] = 0;
                     }
@@ -2555,7 +2092,7 @@
                 const last30DaysCosts = last30Days.map(date => costsByDate[date]);
                 
                 // Get daily goal
-                const dailyGoal = hotelData.goals.Daily ? hotelData.goals.Daily.target : 0;
+                const dailyGoal = goals.Daily ? goals.Daily.target : 0;
                 const dailyGoals = last30Days.map(() => dailyGoal);
                 
                 // Update chart
@@ -2570,12 +2107,7 @@
                 showToast("Error updating benchmark goal chart: " + error.message, "danger");
             }
         }
-        
-        // Show loading overlay
-        function showLoading(show) {
-            document.getElementById('loadingOverlay').style.display = show ? 'flex' : 'none';
-        }
-        
+
         // Show toast notification
         function showToast(message, type = 'info') {
             try {
@@ -2587,17 +2119,59 @@
                 const toast = new bootstrap.Toast(toastElement);
                 toast.show();
                 
-                // Log analytics event
-                analytics.logEvent('notification_shown', {
-                    message_type: type,
-                    user_id: currentUser ? currentUser.uid : null
-                });
-                
                 console.log("Toast notification shown:", message);
             } catch (error) {
                 console.error("Error showing toast notification:", error);
                 // Fallback to alert if toast fails
                 alert(message);
+            }
+        }
+
+        // Export data function
+        function exportData() {
+            try {
+                const data = JSON.parse(localStorage.getItem('hotelData'));
+                const dataStr = JSON.stringify(data, null, 2);
+                const dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(dataStr);
+                
+                const exportFileDefaultName = `hotel_data_${new Date().toISOString().split('T')[0]}.json`;
+                
+                const linkElement = document.createElement('a');
+                linkElement.setAttribute('href', dataUri);
+                linkElement.setAttribute('download', exportFileDefaultName);
+                linkElement.click();
+                
+                console.log("Data exported successfully");
+            } catch (error) {
+                console.error("Error exporting data:", error);
+                showToast("Error exporting data: " + error.message, "danger");
+            }
+        }
+
+        // Import data function
+        function importData(event) {
+            try {
+                const file = event.target.files[0];
+                if (!file) return;
+                
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    try {
+                        const data = JSON.parse(e.target.result);
+                        localStorage.setItem('hotelData', JSON.stringify(data));
+                        loadAllData();
+                        updateDashboard();
+                        showToast('Data imported successfully', 'success');
+                        console.log("Data imported successfully");
+                    } catch (error) {
+                        console.error("Error parsing imported data:", error);
+                        showToast('Error importing data: Invalid file format', 'danger');
+                    }
+                };
+                reader.readAsText(file);
+            } catch (error) {
+                console.error("Error importing data:", error);
+                showToast("Error importing data: " + error.message, "danger");
             }
         }
     </script>
