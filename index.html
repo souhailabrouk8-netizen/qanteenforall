@@ -311,6 +311,27 @@
             background-color: rgba(212, 175, 55, 0.1);
         }
 
+        .department-meal-card {
+            background-color: white;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 15px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .department-meal-card h5 {
+            color: var(--conrad-black);
+            margin-bottom: 10px;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 5px;
+        }
+
+        .meal-type-badge {
+            display: inline-block;
+            margin-right: 10px;
+            margin-bottom: 5px;
+        }
+
         @media (max-width: 768px) {
             .stat-card h3 {
                 font-size: 1.8rem;
@@ -415,6 +436,60 @@
                 </div>
             </div>
 
+            <!-- New Meal Type Statistics Section -->
+            <div class="row mb-4">
+                <div class="col-md-12">
+                    <div class="card">
+                        <div class="card-header">
+                            <i class="bi bi-egg-fried"></i> Employee Count by Meal Type
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-4">
+                                    <div class="meal-summary">
+                                        <h5><i class="bi bi-sunrise"></i> Breakfast</h5>
+                                        <div class="summary-item">
+                                            <span>Total Employees:</span>
+                                            <span id="breakfastTotal">0</span>
+                                        </div>
+                                        <div class="summary-item">
+                                            <span>Departments:</span>
+                                            <span id="breakfastDepts">0</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="meal-summary">
+                                        <h5><i class="bi bi-sun"></i> Lunch</h5>
+                                        <div class="summary-item">
+                                            <span>Total Employees:</span>
+                                            <span id="lunchTotal">0</span>
+                                        </div>
+                                        <div class="summary-item">
+                                            <span>Departments:</span>
+                                            <span id="lunchDepts">0</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="meal-summary">
+                                        <h5><i class="bi bi-moon"></i> Dinner</h5>
+                                        <div class="summary-item">
+                                            <span>Total Employees:</span>
+                                            <span id="dinnerTotal">0</span>
+                                        </div>
+                                        <div class="summary-item">
+                                            <span>Departments:</span>
+                                            <span id="dinnerDepts">0</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
             <div class="row">
                 <div class="col-md-6">
                     <div class="card dashboard-card">
@@ -506,32 +581,17 @@
                         </div>
                     </div>
 
-                    <!-- Meal Summary Cards -->
+                    <!-- Department View -->
                     <div class="row mb-3">
-                        <div class="col-md-4">
-                            <div class="meal-summary">
-                                <h5><i class="bi bi-sunrise"></i> Breakfast Total</h5>
-                                <div class="summary-item">
-                                    <span>Total Employees:</span>
-                                    <span id="breakfastTotal">0</span>
+                        <div class="col-md-12">
+                            <div class="card">
+                                <div class="card-header">
+                                    <i class="bi bi-building"></i> Department View
                                 </div>
-                            </div>
-                        </div>
-                        <div class="col-md-4">
-                            <div class="meal-summary">
-                                <h5><i class="bi bi-sun"></i> Lunch Total</h5>
-                                <div class="summary-item">
-                                    <span>Total Employees:</span>
-                                    <span id="lunchTotal">0</span>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-md-4">
-                            <div class="meal-summary">
-                                <h5><i class="bi bi-moon"></i> Dinner Total</h5>
-                                <div class="summary-item">
-                                    <span>Total Employees:</span>
-                                    <span id="dinnerTotal">0</span>
+                                <div class="card-body">
+                                    <div id="departmentView">
+                                        <!-- Department cards will be populated here -->
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -1161,6 +1221,9 @@
                     tbody.appendChild(row);
                 });
 
+                // Update department view
+                updateDepartmentView(employees);
+                
                 // Update meal summaries
                 updateMealSummaries(employees);
                 
@@ -1171,27 +1234,83 @@
             }
         }
 
+        // Update department view
+        function updateDepartmentView(employees) {
+            try {
+                const departmentView = document.getElementById('departmentView');
+                departmentView.innerHTML = '';
+                
+                // Group employees by department
+                const departments = {};
+                employees.forEach(emp => {
+                    if (!departments[emp.department]) {
+                        departments[emp.department] = {
+                            Breakfast: 0,
+                            Lunch: 0,
+                            Dinner: 0
+                        };
+                    }
+                    departments[emp.department][emp.mealType] += emp.count;
+                });
+                
+                // Create department cards
+                for (const [department, mealTypes] of Object.entries(departments)) {
+                    const card = document.createElement('div');
+                    card.className = 'department-meal-card';
+                    
+                    let mealBadges = '';
+                    if (mealTypes.Breakfast > 0) {
+                        mealBadges += `<span class="badge bg-warning text-dark meal-type-badge">Breakfast: ${mealTypes.Breakfast}</span>`;
+                    }
+                    if (mealTypes.Lunch > 0) {
+                        mealBadges += `<span class="badge bg-success meal-type-badge">Lunch: ${mealTypes.Lunch}</span>`;
+                    }
+                    if (mealTypes.Dinner > 0) {
+                        mealBadges += `<span class="badge bg-primary meal-type-badge">Dinner: ${mealTypes.Dinner}</span>`;
+                    }
+                    
+                    card.innerHTML = `
+                        <h5>${department}</h5>
+                        <div>${mealBadges}</div>
+                    `;
+                    
+                    departmentView.appendChild(card);
+                }
+                
+                console.log("Department view updated successfully");
+            } catch (error) {
+                console.error("Error updating department view:", error);
+                showToast("Error updating department view: " + error.message, "danger");
+            }
+        }
+
         // Update meal summaries
         function updateMealSummaries(employees) {
             try {
                 const today = new Date().toISOString().split('T')[0];
                 const todayEmployees = employees.filter(emp => emp.date === today);
                 
-                const breakfastTotal = todayEmployees
-                    .filter(emp => emp.mealType === 'Breakfast')
-                    .reduce((sum, emp) => sum + emp.count, 0);
+                // Calculate totals for each meal type
+                const mealTotals = {
+                    Breakfast: { total: 0, departments: new Set() },
+                    Lunch: { total: 0, departments: new Set() },
+                    Dinner: { total: 0, departments: new Set() }
+                };
                 
-                const lunchTotal = todayEmployees
-                    .filter(emp => emp.mealType === 'Lunch')
-                    .reduce((sum, emp) => sum + emp.count, 0);
+                todayEmployees.forEach(emp => {
+                    mealTotals[emp.mealType].total += emp.count;
+                    mealTotals[emp.mealType].departments.add(emp.department);
+                });
                 
-                const dinnerTotal = todayEmployees
-                    .filter(emp => emp.mealType === 'Dinner')
-                    .reduce((sum, emp) => sum + emp.count, 0);
+                // Update dashboard meal summaries
+                document.getElementById('breakfastTotal').textContent = mealTotals.Breakfast.total;
+                document.getElementById('breakfastDepts').textContent = mealTotals.Breakfast.departments.size;
                 
-                document.getElementById('breakfastTotal').textContent = breakfastTotal;
-                document.getElementById('lunchTotal').textContent = lunchTotal;
-                document.getElementById('dinnerTotal').textContent = dinnerTotal;
+                document.getElementById('lunchTotal').textContent = mealTotals.Lunch.total;
+                document.getElementById('lunchDepts').textContent = mealTotals.Lunch.departments.size;
+                
+                document.getElementById('dinnerTotal').textContent = mealTotals.Dinner.total;
+                document.getElementById('dinnerDepts').textContent = mealTotals.Dinner.departments.size;
                 
                 console.log("Meal summaries updated successfully");
             } catch (error) {
