@@ -1,0 +1,2179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Conrad Rabat Arzana - Food Cost Management System</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        :root {
+            --conrad-black: #000000;
+            --conrad-gold: #D4AF37;
+            --conrad-dark-gray: #222222;
+            --conrad-light-gray: #f5f5f5;
+            --conrad-medium-gray: #777777;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--conrad-light-gray);
+            color: var(--conrad-dark-gray);
+        }
+
+        .navbar {
+            background-color: var(--conrad-black);
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+        }
+
+        .navbar-brand {
+            color: var(--conrad-gold) !important;
+            font-weight: bold;
+            font-size: 1.5rem;
+        }
+
+        .nav-link {
+            color: white !important;
+            transition: color 0.3s;
+        }
+
+        .nav-link:hover, .nav-link.active {
+            color: var(--conrad-gold) !important;
+        }
+
+        .card {
+            border: none;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+            transition: transform 0.3s;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+        }
+
+        .card-header {
+            background-color: var(--conrad-black);
+            color: white;
+            font-weight: bold;
+            border-radius: 8px 8px 0 0 !important;
+            padding: 15px 20px;
+        }
+
+        .card-header i {
+            color: var(--conrad-gold);
+            margin-right: 10px;
+        }
+
+        .btn-primary {
+            background-color: var(--conrad-black);
+            border-color: var(--conrad-gold);
+            color: white;
+            transition: all 0.3s;
+        }
+
+        .btn-primary:hover {
+            background-color: var(--conrad-gold);
+            border-color: var(--conrad-gold);
+            color: var(--conrad-black);
+        }
+
+        .btn-outline-primary {
+            border-color: var(--conrad-gold);
+            color: var(--conrad-gold);
+        }
+
+        .btn-outline-primary:hover {
+            background-color: var(--conrad-gold);
+            border-color: var(--conrad-gold);
+            color: var(--conrad-black);
+        }
+
+        .btn-sm {
+            padding: 0.25rem 0.5rem;
+            font-size: 0.875rem;
+        }
+
+        .form-control, .form-select {
+            border-radius: 4px;
+            border: 1px solid #ccc;
+            padding: 10px 15px;
+        }
+
+        .form-control:focus, .form-select:focus {
+            border-color: var(--conrad-gold);
+            box-shadow: 0 0 0 0.25rem rgba(212, 175, 55, 0.25);
+        }
+
+        .table {
+            margin-top: 20px;
+        }
+
+        .table thead th {
+            background-color: var(--conrad-black);
+            color: white;
+            border: none;
+        }
+
+        .table tbody tr:nth-of-type(odd) {
+            background-color: rgba(212, 175, 55, 0.05);
+        }
+
+        .badge {
+            padding: 8px 12px;
+            font-weight: normal;
+        }
+
+        .badge-gold {
+            background-color: var(--conrad-gold);
+            color: var(--conrad-black);
+        }
+
+        .badge-black {
+            background-color: var(--conrad-black);
+            color: white;
+        }
+
+        .dashboard-card {
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .dashboard-card .card-body {
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .chart-container {
+            flex-grow: 1;
+            position: relative;
+            height: 300px;
+        }
+
+        .stat-card {
+            background: linear-gradient(135deg, var(--conrad-black) 0%, #333 100%);
+            color: white;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            transition: transform 0.3s;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .stat-card h3 {
+            color: var(--conrad-gold);
+            font-size: 2.2rem;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .stat-card p {
+            margin: 0;
+            font-size: 1rem;
+        }
+
+        .goal-progress {
+            height: 25px;
+            background-color: #e9ecef;
+            border-radius: 15px;
+            overflow: hidden;
+            margin-top: 10px;
+        }
+
+        .goal-progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, var(--conrad-gold) 0%, #f0c040 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--conrad-black);
+            font-weight: bold;
+        }
+
+        .tab-content {
+            padding-top: 20px;
+        }
+
+        .nav-tabs .nav-link {
+            color: var(--conrad-black);
+            border-bottom: 2px solid transparent;
+            transition: all 0.3s;
+        }
+
+        .nav-tabs .nav-link.active {
+            color: var(--conrad-gold);
+            border-bottom: 2px solid var(--conrad-gold);
+            background-color: transparent;
+        }
+
+        .nav-tabs .nav-link:hover {
+            color: var(--conrad-gold);
+            border-bottom: 2px solid var(--conrad-gold);
+        }
+
+        .menu-day-card {
+            border-left: 4px solid var(--conrad-gold);
+            margin-bottom: 15px;
+        }
+
+        .alert-conrad {
+            background-color: rgba(212, 175, 55, 0.1);
+            border-left: 4px solid var(--conrad-gold);
+            color: var(--conrad-dark-gray);
+        }
+
+        .spinner-border {
+            color: var(--conrad-gold);
+        }
+
+        .footer {
+            background-color: var(--conrad-black);
+            color: white;
+            padding: 20px 0;
+            margin-top: 40px;
+        }
+
+        .footer p {
+            margin: 0;
+        }
+
+        .footer a {
+            color: var(--conrad-gold);
+            text-decoration: none;
+        }
+
+        .footer a:hover {
+            text-decoration: underline;
+        }
+
+        .modal-header {
+            background-color: var(--conrad-black);
+            color: white;
+        }
+
+        .modal-header .btn-close {
+            filter: invert(1);
+        }
+
+        .loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.7);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+        }
+
+        .loading-content {
+            background-color: white;
+            padding: 30px;
+            border-radius: 8px;
+            text-align: center;
+        }
+
+        .loading-content h3 {
+            color: var(--conrad-black);
+            margin-bottom: 20px;
+        }
+
+        .meal-summary {
+            background: linear-gradient(135deg, var(--conrad-black) 0%, #333 100%);
+            color: white;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 20px;
+        }
+
+        .meal-summary h5 {
+            color: var(--conrad-gold);
+            margin-bottom: 10px;
+        }
+
+        .meal-summary .summary-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 5px;
+        }
+
+        .edit-mode {
+            background-color: rgba(212, 175, 55, 0.1);
+        }
+
+        @media (max-width: 768px) {
+            .stat-card h3 {
+                font-size: 1.8rem;
+            }
+            
+            .chart-container {
+                height: 250px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Loading Overlay -->
+    <div id="loadingOverlay" class="loading-overlay" style="display: none;">
+        <div class="loading-content">
+            <h3>Processing Data</h3>
+            <div class="spinner-border" role="status">
+                <span class="visually-hidden">Loading...</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark">
+        <div class="container">
+            <a class="navbar-brand" href="#">
+                <i class="bi bi-building"></i> Conrad Rabat Arzana
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link active" href="#" data-section="dashboard">
+                            <i class="bi bi-speedometer2"></i> Dashboard
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#" data-section="employees">
+                            <i class="bi bi-people"></i> Employees
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#" data-section="foodcost">
+                            <i class="bi bi-currency-dollar"></i> Food Cost
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#" data-section="meals">
+                            <i class="bi bi-egg-fried"></i> Employee Meals
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#" data-section="waste">
+                            <i class="bi bi-trash"></i> Waste Tracking
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#" data-section="menu">
+                            <i class="bi bi-calendar-week"></i> Menu Planning
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#" data-section="goals">
+                            <i class="bi bi-bullseye"></i> Goals & Benchmark
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="container mt-4">
+        <!-- Dashboard Section -->
+        <div id="dashboard" class="content-section">
+            <div class="row mb-4">
+                <div class="col-md-3">
+                    <div class="stat-card">
+                        <h3 id="totalEmployees">0</h3>
+                        <p>Total Employees</p>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="stat-card">
+                        <h3 id="todayFoodCost">0 MAD</h3>
+                        <p>Today's Food Cost</p>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="stat-card">
+                        <h3 id="weeklyAverage">0 MAD</h3>
+                        <p>Weekly Average</p>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="stat-card">
+                        <h3 id="wastePercentage">0%</h3>
+                        <p>Waste Percentage</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="card dashboard-card">
+                        <div class="card-header">
+                            <i class="bi bi-graph-up"></i> Daily Food Cost Trend
+                        </div>
+                        <div class="card-body">
+                            <div class="chart-container">
+                                <canvas id="dailyCostChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="card dashboard-card">
+                        <div class="card-header">
+                            <i class="bi bi-pie-chart"></i> Consumption by Meal Type
+                        </div>
+                        <div class="card-body">
+                            <div class="chart-container">
+                                <canvas id="mealTypeChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row mt-4">
+                <div class="col-md-12">
+                    <div class="card dashboard-card">
+                        <div class="card-header">
+                            <i class="bi bi-calendar-check"></i> Weekly Benchmark
+                        </div>
+                        <div class="card-body">
+                            <div class="chart-container">
+                                <canvas id="benchmarkChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Employees Section -->
+        <div id="employees" class="content-section" style="display: none;">
+            <div class="card">
+                <div class="card-header">
+                    <i class="bi bi-people"></i> Department Employee Count by Meal
+                </div>
+                <div class="card-body">
+                    <div class="row mb-3">
+                        <div class="col-md-3">
+                            <label for="departmentSelect" class="form-label">Select Department</label>
+                            <select class="form-select" id="departmentSelect">
+                                <option value="">Choose Department...</option>
+                                <option value="Housekeeping">Housekeeping</option>
+                                <option value="Engineering">Engineering</option>
+                                <option value="Front Office">Front Office</option>
+                                <option value="Security and IT">Security and IT</option>
+                                <option value="Finance and Procurement">Finance and Procurement</option>
+                                <option value="Marketing">Marketing</option>
+                                <option value="F&B (La brise)">F&B (La brise)</option>
+                                <option value="F&B (l'oursin)">F&B (l'oursin)</option>
+                                <option value="F&B (99)">F&B (99)</option>
+                                <option value="F&B (IRD AND BANQUETING)">F&B (IRD AND BANQUETING)</option>
+                            </select>
+                        </div>
+                        <div class="col-md-2">
+                            <label for="mealTypeSelect" class="form-label">Meal Type</label>
+                            <select class="form-select" id="mealTypeSelect">
+                                <option value="">Choose...</option>
+                                <option value="Breakfast">Breakfast</option>
+                                <option value="Lunch">Lunch</option>
+                                <option value="Dinner">Dinner</option>
+                            </select>
+                        </div>
+                        <div class="col-md-2">
+                            <label for="employeeCount" class="form-label">Number of Employees</label>
+                            <input type="number" class="form-control" id="employeeCount" min="1" placeholder="Enter count">
+                        </div>
+                        <div class="col-md-2">
+                            <label for="employeeDate" class="form-label">Date</label>
+                            <input type="date" class="form-control" id="employeeDate">
+                        </div>
+                        <div class="col-md-3 d-flex align-items-end">
+                            <button class="btn btn-primary w-100" id="saveEmployeeCount">
+                                <i class="bi bi-save"></i> Save Count
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Meal Summary Cards -->
+                    <div class="row mb-3">
+                        <div class="col-md-4">
+                            <div class="meal-summary">
+                                <h5><i class="bi bi-sunrise"></i> Breakfast Total</h5>
+                                <div class="summary-item">
+                                    <span>Total Employees:</span>
+                                    <span id="breakfastTotal">0</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="meal-summary">
+                                <h5><i class="bi bi-sun"></i> Lunch Total</h5>
+                                <div class="summary-item">
+                                    <span>Total Employees:</span>
+                                    <span id="lunchTotal">0</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="meal-summary">
+                                <h5><i class="bi bi-moon"></i> Dinner Total</h5>
+                                <div class="summary-item">
+                                    <span>Total Employees:</span>
+                                    <span id="dinnerTotal">0</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="table-responsive">
+                        <table class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th>Date</th>
+                                    <th>Department</th>
+                                    <th>Meal Type</th>
+                                    <th>Employee Count</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="employeeTableBody">
+                                <!-- Data will be populated here -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Food Cost Section -->
+        <div id="foodcost" class="content-section" style="display: none;">
+            <div class="card">
+                <div class="card-header">
+                    <i class="bi bi-currency-dollar"></i> Canteen Food Cost Tracking
+                </div>
+                <div class="card-body">
+                    <div class="row mb-3">
+                        <div class="col-md-3">
+                            <label for="costDate" class="form-label">Date</label>
+                            <input type="date" class="form-control" id="costDate">
+                        </div>
+                        <div class="col-md-3">
+                            <label for="costMealType" class="form-label">Meal Type</label>
+                            <select class="form-select" id="costMealType">
+                                <option value="">Choose Meal Type...</option>
+                                <option value="Breakfast">Breakfast</option>
+                                <option value="Lunch">Lunch</option>
+                                <option value="Dinner">Dinner</option>
+                            </select>
+                        </div>
+                        <div class="col-md-3">
+                            <label for="foodCost" class="form-label">Food Cost (MAD)</label>
+                            <input type="number" class="form-control" id="foodCost" min="0" step="0.01" placeholder="Enter cost">
+                        </div>
+                        <div class="col-md-3 d-flex align-items-end">
+                            <button class="btn btn-primary w-100" id="saveFoodCost">
+                                <i class="bi bi-save"></i> Save Cost
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="table-responsive">
+                        <table class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th>Date</th>
+                                    <th>Meal Type</th>
+                                    <th>Food Cost (MAD)</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="foodCostTableBody">
+                                <!-- Data will be populated here -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Employee Meals Section -->
+        <div id="meals" class="content-section" style="display: none;">
+            <div class="card">
+                <div class="card-header">
+                    <i class="bi bi-egg-fried"></i> Employee Meal Tracking
+                </div>
+                <div class="card-body">
+                    <div class="row mb-3">
+                        <div class="col-md-2">
+                            <label for="mealDate" class="form-label">Date</label>
+                            <input type="date" class="form-control" id="mealDate">
+                        </div>
+                        <div class="col-md-2">
+                            <label for="mealType" class="form-label">Meal Type</label>
+                            <select class="form-select" id="mealType">
+                                <option value="">Choose...</option>
+                                <option value="Breakfast">Breakfast</option>
+                                <option value="Lunch">Lunch</option>
+                                <option value="Dinner">Dinner</option>
+                            </select>
+                        </div>
+                        <div class="col-md-3">
+                            <label for="mealItem" class="form-label">Meal Item</label>
+                            <input type="text" class="form-control" id="mealItem" placeholder="Enter meal item">
+                        </div>
+                        <div class="col-md-2">
+                            <label for="mealCost" class="form-label">Cost per Item (MAD)</label>
+                            <input type="number" class="form-control" id="mealCost" min="0" step="0.01" placeholder="Enter cost">
+                        </div>
+                        <div class="col-md-2">
+                            <label for="mealQuantity" class="form-label">Quantity</label>
+                            <input type="number" class="form-control" id="mealQuantity" min="1" placeholder="Enter quantity">
+                        </div>
+                        <div class="col-md-1 d-flex align-items-end">
+                            <button class="btn btn-primary w-100" id="saveMeal">
+                                <i class="bi bi-save"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="table-responsive">
+                        <table class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th>Date</th>
+                                    <th>Meal Type</th>
+                                    <th>Meal Item</th>
+                                    <th>Cost per Item (MAD)</th>
+                                    <th>Quantity</th>
+                                    <th>Total Cost (MAD)</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="mealTableBody">
+                                <!-- Data will be populated here -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Waste Tracking Section -->
+        <div id="waste" class="content-section" style="display: none;">
+            <div class="card">
+                <div class="card-header">
+                    <i class="bi bi-trash"></i> Waste Tracking
+                </div>
+                <div class="card-body">
+                    <div class="row mb-3">
+                        <div class="col-md-3">
+                            <label for="wasteDate" class="form-label">Date</label>
+                            <input type="date" class="form-control" id="wasteDate">
+                        </div>
+                        <div class="col-md-3">
+                            <label for="wasteMealType" class="form-label">Meal Type</label>
+                            <select class="form-select" id="wasteMealType">
+                                <option value="">Choose...</option>
+                                <option value="Breakfast">Breakfast</option>
+                                <option value="Lunch">Lunch</option>
+                                <option value="Dinner">Dinner</option>
+                            </select>
+                        </div>
+                        <div class="col-md-3">
+                            <label for="wasteAmount" class="form-label">Waste Amount (kg)</label>
+                            <input type="number" class="form-control" id="wasteAmount" min="0" step="0.01" placeholder="Enter amount">
+                        </div>
+                        <div class="col-md-3 d-flex align-items-end">
+                            <button class="btn btn-primary w-100" id="saveWaste">
+                                <i class="bi bi-save"></i> Save Waste
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="table-responsive">
+                        <table class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th>Date</th>
+                                    <th>Meal Type</th>
+                                    <th>Waste Amount (kg)</th>
+                                    <th>Estimated Cost (MAD)</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="wasteTableBody">
+                                <!-- Data will be populated here -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Menu Planning Section -->
+        <div id="menu" class="content-section" style="display: none;">
+            <div class="card">
+                <div class="card-header">
+                    <i class="bi bi-calendar-week"></i> Canteen Weekly Menu Planning
+                </div>
+                <div class="card-body">
+                    <div class="row mb-3">
+                        <div class="col-md-2">
+                            <label for="weekStart" class="form-label">Week Starting</label>
+                            <input type="date" class="form-control" id="weekStart">
+                        </div>
+                        <div class="col-md-2">
+                            <label for="menuDay" class="form-label">Day</label>
+                            <select class="form-select" id="menuDay">
+                                <option value="">Choose...</option>
+                                <option value="Monday">Monday</option>
+                                <option value="Tuesday">Tuesday</option>
+                                <option value="Wednesday">Wednesday</option>
+                                <option value="Thursday">Thursday</option>
+                                <option value="Friday">Friday</option>
+                                <option value="Saturday">Saturday</option>
+                                <option value="Sunday">Sunday</option>
+                            </select>
+                        </div>
+                        <div class="col-md-2">
+                            <label for="menuMealType" class="form-label">Meal Type</label>
+                            <select class="form-select" id="menuMealType">
+                                <option value="">Choose...</option>
+                                <option value="Breakfast">Breakfast</option>
+                                <option value="Lunch">Lunch</option>
+                                <option value="Dinner">Dinner</option>
+                            </select>
+                        </div>
+                        <div class="col-md-2">
+                            <label for="expectedEmployees" class="form-label">Expected Employees</label>
+                            <input type="number" class="form-control" id="expectedEmployees" min="1" placeholder="Enter count">
+                        </div>
+                        <div class="col-md-2 d-flex align-items-end">
+                            <button class="btn btn-primary w-100" id="saveMenuPlan">
+                                <i class="bi bi-save"></i> Save Plan
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label for="menuItems" class="form-label">Menu Items (one per line)</label>
+                            <textarea class="form-control" id="menuItems" rows="3" placeholder="Enter menu items"></textarea>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="menuCost" class="form-label">Total Cost (MAD)</label>
+                            <input type="number" class="form-control" id="menuCost" min="0" step="0.01" placeholder="Enter total cost">
+                        </div>
+                    </div>
+
+                    <div class="table-responsive">
+                        <table class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th>Week</th>
+                                    <th>Day</th>
+                                    <th>Meal Type</th>
+                                    <th>Expected Employees</th>
+                                    <th>Menu Items</th>
+                                    <th>Total Cost (MAD)</th>
+                                    <th>Cost per Employee (MAD)</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="menuTableBody">
+                                <!-- Data will be populated here -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Goals & Benchmark Section -->
+        <div id="goals" class="content-section" style="display: none;">
+            <div class="card">
+                <div class="card-header">
+                    <i class="bi bi-bullseye"></i> Cost Saving Goals & Benchmark
+                </div>
+                <div class="card-body">
+                    <div class="row mb-3">
+                        <div class="col-md-4">
+                            <label for="goalPeriod" class="form-label">Goal Period</label>
+                            <select class="form-select" id="goalPeriod">
+                                <option value="">Choose...</option>
+                                <option value="Daily">Daily</option>
+                                <option value="Weekly">Weekly</option>
+                                <option value="Monthly">Monthly</option>
+                            </select>
+                        </div>
+                        <div class="col-md-4">
+                            <label for="goalAmount" class="form-label">Target Food Cost (MAD)</label>
+                            <input type="number" class="form-control" id="goalAmount" min="0" step="0.01" placeholder="Enter target cost">
+                        </div>
+                        <div class="col-md-4 d-flex align-items-end">
+                            <button class="btn btn-primary w-100" id="saveGoal">
+                                <i class="bi bi-save"></i> Set Goal
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="row mb-3">
+                        <div class="col-md-12">
+                            <div class="alert alert-conrad">
+                                <h5><i class="bi bi-info-circle"></i> Current Goals</h5>
+                                <div id="currentGoals">
+                                    <!-- Goals will be displayed here -->
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row mb-3">
+                        <div class="col-md-12">
+                            <h5>Goal Progress</h5>
+                            <div id="goalProgress">
+                                <!-- Progress bars will be displayed here -->
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="card dashboard-card">
+                                <div class="card-header">
+                                    <i class="bi bi-graph-up-arrow"></i> Benchmark Performance
+                                </div>
+                                <div class="card-body">
+                                    <div class="chart-container">
+                                        <canvas id="benchmarkGoalChart"></canvas>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-6">
+                    <p>&copy; 2023 Conrad Rabat Arzana. All rights reserved.</p>
+                </div>
+                <div class="col-md-6 text-end">
+                    <p>Food Cost Management System v1.0 | <a href="#">Support</a></p>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Toast Notification -->
+    <div class="position-fixed bottom-0 end-0 p-3" style="z-index: 11">
+        <div id="liveToast" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
+            <div class="toast-header">
+                <i class="bi bi-info-circle-fill text-primary me-2"></i>
+                <strong class="me-auto">Notification</strong>
+                <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+            </div>
+            <div class="toast-body" id="toastMessage">
+                <!-- Message will be displayed here -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Edit Modal -->
+    <div class="modal fade" id="editModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Edit Employee Count</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <input type="hidden" id="editId">
+                    <div class="mb-3">
+                        <label for="editDepartment" class="form-label">Department</label>
+                        <input type="text" class="form-control" id="editDepartment" readonly>
+                    </div>
+                    <div class="mb-3">
+                        <label for="editMealType" class="form-label">Meal Type</label>
+                        <select class="form-select" id="editMealType">
+                            <option value="Breakfast">Breakfast</option>
+                            <option value="Lunch">Lunch</option>
+                            <option value="Dinner">Dinner</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label for="editCount" class="form-label">Employee Count</label>
+                        <input type="number" class="form-control" id="editCount" min="1">
+                    </div>
+                    <div class="mb-3">
+                        <label for="editDate" class="form-label">Date</label>
+                        <input type="date" class="form-control" id="editDate">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-primary" id="saveEdit">Save Changes</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Initialize the application
+        document.addEventListener('DOMContentLoaded', function() {
+            try {
+                // Set today's date as default for all date inputs
+                const today = new Date().toISOString().split('T')[0];
+                document.getElementById('costDate').value = today;
+                document.getElementById('mealDate').value = today;
+                document.getElementById('wasteDate').value = today;
+                document.getElementById('employeeDate').value = today;
+                
+                // Set current week start as default for menu planning
+                const currentWeekStart = new Date();
+                currentWeekStart.setDate(currentWeekStart.getDate() - currentWeekStart.getDay() + 1);
+                document.getElementById('weekStart').value = currentWeekStart.toISOString().split('T')[0];
+
+                // Initialize data storage
+                initializeDataStorage();
+                
+                // Load all data
+                loadAllData();
+                
+                // Setup event listeners
+                setupEventListeners();
+                
+                // Initialize charts
+                initializeCharts();
+                
+                // Update dashboard
+                updateDashboard();
+                
+                console.log("Application initialized successfully");
+            } catch (error) {
+                console.error("Error initializing application:", error);
+                showToast("Error initializing application: " + error.message, "danger");
+            }
+        });
+
+        // Initialize data storage if not exists
+        function initializeDataStorage() {
+            try {
+                if (!localStorage.getItem('hotelData')) {
+                    const initialData = {
+                        employees: [],
+                        foodCosts: [],
+                        meals: [],
+                        waste: [],
+                        menuPlans: [],
+                        goals: {}
+                    };
+                    localStorage.setItem('hotelData', JSON.stringify(initialData));
+                    console.log("Initial data storage created");
+                }
+            } catch (error) {
+                console.error("Error initializing data storage:", error);
+                showToast("Error initializing data storage: " + error.message, "danger");
+            }
+        }
+
+        // Load all data from localStorage
+        function loadAllData() {
+            try {
+                const data = JSON.parse(localStorage.getItem('hotelData'));
+                
+                // Load employee counts
+                loadEmployeeCounts(data.employees);
+                
+                // Load food costs
+                loadFoodCosts(data.foodCosts);
+                
+                // Load meals
+                loadMeals(data.meals);
+                
+                // Load waste
+                loadWaste(data.waste);
+                
+                // Load menu plans
+                loadMenuPlans(data.menuPlans);
+                
+                // Load goals
+                loadGoals(data.goals);
+                
+                console.log("All data loaded successfully");
+            } catch (error) {
+                console.error("Error loading data:", error);
+                showToast("Error loading data: " + error.message, "danger");
+            }
+        }
+
+        // Setup event listeners
+        function setupEventListeners() {
+            try {
+                // Navigation
+                document.querySelectorAll('.nav-link').forEach(link => {
+                    link.addEventListener('click', function(e) {
+                        e.preventDefault();
+                        const section = this.getAttribute('data-section');
+                        showSection(section);
+                        
+                        // Update active nav
+                        document.querySelectorAll('.nav-link').forEach(navLink => {
+                            navLink.classList.remove('active');
+                        });
+                        this.classList.add('active');
+                    });
+                });
+
+                // Employee count
+                document.getElementById('saveEmployeeCount').addEventListener('click', saveEmployeeCount);
+                
+                // Food cost
+                document.getElementById('saveFoodCost').addEventListener('click', saveFoodCost);
+                
+                // Meals
+                document.getElementById('saveMeal').addEventListener('click', saveMeal);
+                
+                // Waste
+                document.getElementById('saveWaste').addEventListener('click', saveWaste);
+                
+                // Menu planning
+                document.getElementById('saveMenuPlan').addEventListener('click', saveMenuPlan);
+                
+                // Goals
+                document.getElementById('saveGoal').addEventListener('click', saveGoal);
+
+                // Edit modal save
+                document.getElementById('saveEdit').addEventListener('click', saveEmployeeEdit);
+                
+                console.log("Event listeners setup successfully");
+            } catch (error) {
+                console.error("Error setting up event listeners:", error);
+                showToast("Error setting up event listeners: " + error.message, "danger");
+            }
+        }
+
+        // Show specific section
+        function showSection(sectionId) {
+            try {
+                document.querySelectorAll('.content-section').forEach(section => {
+                    section.style.display = 'none';
+                });
+                document.getElementById(sectionId).style.display = 'block';
+                
+                // Update charts when dashboard is shown
+                if (sectionId === 'dashboard') {
+                    updateDashboard();
+                }
+                
+                console.log("Section displayed:", sectionId);
+            } catch (error) {
+                console.error("Error showing section:", error);
+                showToast("Error showing section: " + error.message, "danger");
+            }
+        }
+
+        // Save employee count
+        function saveEmployeeCount() {
+            try {
+                const department = document.getElementById('departmentSelect').value;
+                const mealType = document.getElementById('mealTypeSelect').value;
+                const count = document.getElementById('employeeCount').value;
+                const date = document.getElementById('employeeDate').value;
+                
+                if (!department || !mealType || !count || !date) {
+                    showToast('Please fill all fields', 'warning');
+                    return;
+                }
+                
+                const data = JSON.parse(localStorage.getItem('hotelData'));
+                const newEmployee = {
+                    id: Date.now(),
+                    department: department,
+                    mealType: mealType,
+                    count: parseInt(count),
+                    date: date
+                };
+                
+                data.employees.push(newEmployee);
+                localStorage.setItem('hotelData', JSON.stringify(data));
+                
+                // Clear form
+                document.getElementById('departmentSelect').value = '';
+                document.getElementById('mealTypeSelect').value = '';
+                document.getElementById('employeeCount').value = '';
+                
+                // Reload data
+                loadEmployeeCounts(data.employees);
+                updateDashboard();
+                
+                showToast('Employee count saved successfully', 'success');
+                console.log("Employee count saved successfully");
+            } catch (error) {
+                console.error("Error saving employee count:", error);
+                showToast("Error saving employee count: " + error.message, "danger");
+            }
+        }
+
+        // Load employee counts
+        function loadEmployeeCounts(employees) {
+            try {
+                const tbody = document.getElementById('employeeTableBody');
+                tbody.innerHTML = '';
+                
+                // Sort by date (newest first)
+                employees.sort((a, b) => new Date(b.date) - new Date(a.date));
+                
+                employees.forEach(emp => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>${new Date(emp.date).toLocaleDateString()}</td>
+                        <td>${emp.department}</td>
+                        <td>${emp.mealType}</td>
+                        <td>${emp.count}</td>
+                        <td>
+                            <button class="btn btn-sm btn-outline-primary me-1" onclick="editEmployee(${emp.id})">
+                                <i class="bi bi-pencil"></i>
+                            </button>
+                            <button class="btn btn-sm btn-outline-danger" onclick="deleteEmployee(${emp.id})">
+                                <i class="bi bi-trash"></i>
+                            </button>
+                        </td>
+                    `;
+                    tbody.appendChild(row);
+                });
+
+                // Update meal summaries
+                updateMealSummaries(employees);
+                
+                console.log("Employee counts loaded successfully");
+            } catch (error) {
+                console.error("Error loading employee counts:", error);
+                showToast("Error loading employee counts: " + error.message, "danger");
+            }
+        }
+
+        // Update meal summaries
+        function updateMealSummaries(employees) {
+            try {
+                const today = new Date().toISOString().split('T')[0];
+                const todayEmployees = employees.filter(emp => emp.date === today);
+                
+                const breakfastTotal = todayEmployees
+                    .filter(emp => emp.mealType === 'Breakfast')
+                    .reduce((sum, emp) => sum + emp.count, 0);
+                
+                const lunchTotal = todayEmployees
+                    .filter(emp => emp.mealType === 'Lunch')
+                    .reduce((sum, emp) => sum + emp.count, 0);
+                
+                const dinnerTotal = todayEmployees
+                    .filter(emp => emp.mealType === 'Dinner')
+                    .reduce((sum, emp) => sum + emp.count, 0);
+                
+                document.getElementById('breakfastTotal').textContent = breakfastTotal;
+                document.getElementById('lunchTotal').textContent = lunchTotal;
+                document.getElementById('dinnerTotal').textContent = dinnerTotal;
+                
+                console.log("Meal summaries updated successfully");
+            } catch (error) {
+                console.error("Error updating meal summaries:", error);
+                showToast("Error updating meal summaries: " + error.message, "danger");
+            }
+        }
+
+        // Edit employee
+        function editEmployee(id) {
+            try {
+                const data = JSON.parse(localStorage.getItem('hotelData'));
+                const employee = data.employees.find(emp => emp.id === id);
+                
+                if (employee) {
+                    document.getElementById('editId').value = employee.id;
+                    document.getElementById('editDepartment').value = employee.department;
+                    document.getElementById('editMealType').value = employee.mealType;
+                    document.getElementById('editCount').value = employee.count;
+                    document.getElementById('editDate').value = employee.date;
+                    
+                    const modal = new bootstrap.Modal(document.getElementById('editModal'));
+                    modal.show();
+                }
+                
+                console.log("Edit employee modal opened for ID:", id);
+            } catch (error) {
+                console.error("Error editing employee:", error);
+                showToast("Error editing employee: " + error.message, "danger");
+            }
+        }
+
+        // Save employee edit
+        function saveEmployeeEdit() {
+            try {
+                const id = parseInt(document.getElementById('editId').value);
+                const mealType = document.getElementById('editMealType').value;
+                const count = parseInt(document.getElementById('editCount').value);
+                const date = document.getElementById('editDate').value;
+                
+                const data = JSON.parse(localStorage.getItem('hotelData'));
+                const employeeIndex = data.employees.findIndex(emp => emp.id === id);
+                
+                if (employeeIndex !== -1) {
+                    data.employees[employeeIndex].mealType = mealType;
+                    data.employees[employeeIndex].count = count;
+                    data.employees[employeeIndex].date = date;
+                    
+                    localStorage.setItem('hotelData', JSON.stringify(data));
+                    
+                    // Close modal
+                    bootstrap.Modal.getInstance(document.getElementById('editModal')).hide();
+                    
+                    // Reload data
+                    loadEmployeeCounts(data.employees);
+                    updateDashboard();
+                    
+                    showToast('Employee count updated successfully', 'success');
+                    console.log("Employee edit saved successfully");
+                }
+            } catch (error) {
+                console.error("Error saving employee edit:", error);
+                showToast("Error saving employee edit: " + error.message, "danger");
+            }
+        }
+
+        // Delete employee
+        function deleteEmployee(id) {
+            try {
+                if (confirm('Are you sure you want to delete this employee count record?')) {
+                    const data = JSON.parse(localStorage.getItem('hotelData'));
+                    data.employees = data.employees.filter(emp => emp.id !== id);
+                    localStorage.setItem('hotelData', JSON.stringify(data));
+                    loadEmployeeCounts(data.employees);
+                    updateDashboard();
+                    showToast('Employee count deleted', 'info');
+                    console.log("Employee deleted successfully, ID:", id);
+                }
+            } catch (error) {
+                console.error("Error deleting employee:", error);
+                showToast("Error deleting employee: " + error.message, "danger");
+            }
+        }
+
+        // Save food cost
+        function saveFoodCost() {
+            try {
+                const date = document.getElementById('costDate').value;
+                const mealType = document.getElementById('costMealType').value;
+                const cost = document.getElementById('foodCost').value;
+                
+                if (!date || !mealType || !cost) {
+                    showToast('Please fill all fields', 'warning');
+                    return;
+                }
+                
+                const data = JSON.parse(localStorage.getItem('hotelData'));
+                data.foodCosts.push({
+                    id: Date.now(),
+                    date: date,
+                    mealType: mealType,
+                    cost: parseFloat(cost)
+                });
+                
+                localStorage.setItem('hotelData', JSON.stringify(data));
+                
+                // Clear form
+                document.getElementById('costMealType').value = '';
+                document.getElementById('foodCost').value = '';
+                
+                // Reload data
+                loadFoodCosts(data.foodCosts);
+                updateDashboard();
+                
+                showToast('Food cost saved successfully', 'success');
+                console.log("Food cost saved successfully");
+            } catch (error) {
+                console.error("Error saving food cost:", error);
+                showToast("Error saving food cost: " + error.message, "danger");
+            }
+        }
+
+        // Load food costs
+        function loadFoodCosts(foodCosts) {
+            try {
+                const tbody = document.getElementById('foodCostTableBody');
+                tbody.innerHTML = '';
+                
+                // Sort by date (newest first)
+                foodCosts.sort((a, b) => new Date(b.date) - new Date(a.date));
+                
+                foodCosts.forEach(cost => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>${new Date(cost.date).toLocaleDateString()}</td>
+                        <td>${cost.mealType}</td>
+                        <td>${cost.cost.toFixed(2)} MAD</td>
+                        <td>
+                            <button class="btn btn-sm btn-outline-danger" onclick="deleteFoodCost(${cost.id})">
+                                <i class="bi bi-trash"></i>
+                            </button>
+                        </td>
+                    `;
+                    tbody.appendChild(row);
+                });
+                
+                console.log("Food costs loaded successfully");
+            } catch (error) {
+                console.error("Error loading food costs:", error);
+                showToast("Error loading food costs: " + error.message, "danger");
+            }
+        }
+
+        // Delete food cost
+        function deleteFoodCost(id) {
+            try {
+                if (confirm('Are you sure you want to delete this food cost record?')) {
+                    const data = JSON.parse(localStorage.getItem('hotelData'));
+                    data.foodCosts = data.foodCosts.filter(cost => cost.id !== id);
+                    localStorage.setItem('hotelData', JSON.stringify(data));
+                    loadFoodCosts(data.foodCosts);
+                    updateDashboard();
+                    showToast('Food cost deleted', 'info');
+                    console.log("Food cost deleted successfully, ID:", id);
+                }
+            } catch (error) {
+                console.error("Error deleting food cost:", error);
+                showToast("Error deleting food cost: " + error.message, "danger");
+            }
+        }
+
+        // Save meal
+        function saveMeal() {
+            try {
+                const date = document.getElementById('mealDate').value;
+                const mealType = document.getElementById('mealType').value;
+                const item = document.getElementById('mealItem').value;
+                const cost = document.getElementById('mealCost').value;
+                const quantity = document.getElementById('mealQuantity').value;
+                
+                if (!date || !mealType || !item || !cost || !quantity) {
+                    showToast('Please fill all fields', 'warning');
+                    return;
+                }
+                
+                const data = JSON.parse(localStorage.getItem('hotelData'));
+                data.meals.push({
+                    id: Date.now(),
+                    date: date,
+                    mealType: mealType,
+                    item: item,
+                    cost: parseFloat(cost),
+                    quantity: parseInt(quantity),
+                    totalCost: parseFloat(cost) * parseInt(quantity)
+                });
+                
+                localStorage.setItem('hotelData', JSON.stringify(data));
+                
+                // Clear form
+                document.getElementById('mealType').value = '';
+                document.getElementById('mealItem').value = '';
+                document.getElementById('mealCost').value = '';
+                document.getElementById('mealQuantity').value = '';
+                
+                // Reload data
+                loadMeals(data.meals);
+                updateDashboard();
+                
+                showToast('Meal saved successfully', 'success');
+                console.log("Meal saved successfully");
+            } catch (error) {
+                console.error("Error saving meal:", error);
+                showToast("Error saving meal: " + error.message, "danger");
+            }
+        }
+
+        // Load meals
+        function loadMeals(meals) {
+            try {
+                const tbody = document.getElementById('mealTableBody');
+                tbody.innerHTML = '';
+                
+                // Sort by date (newest first)
+                meals.sort((a, b) => new Date(b.date) - new Date(a.date));
+                
+                meals.forEach(meal => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>${new Date(meal.date).toLocaleDateString()}</td>
+                        <td>${meal.mealType}</td>
+                        <td>${meal.item}</td>
+                        <td>${meal.cost.toFixed(2)} MAD</td>
+                        <td>${meal.quantity}</td>
+                        <td>${meal.totalCost.toFixed(2)} MAD</td>
+                        <td>
+                            <button class="btn btn-sm btn-outline-danger" onclick="deleteMeal(${meal.id})">
+                                <i class="bi bi-trash"></i>
+                            </button>
+                        </td>
+                    `;
+                    tbody.appendChild(row);
+                });
+                
+                console.log("Meals loaded successfully");
+            } catch (error) {
+                console.error("Error loading meals:", error);
+                showToast("Error loading meals: " + error.message, "danger");
+            }
+        }
+
+        // Delete meal
+        function deleteMeal(id) {
+            try {
+                if (confirm('Are you sure you want to delete this meal record?')) {
+                    const data = JSON.parse(localStorage.getItem('hotelData'));
+                    data.meals = data.meals.filter(meal => meal.id !== id);
+                    localStorage.setItem('hotelData', JSON.stringify(data));
+                    loadMeals(data.meals);
+                    updateDashboard();
+                    showToast('Meal deleted', 'info');
+                    console.log("Meal deleted successfully, ID:", id);
+                }
+            } catch (error) {
+                console.error("Error deleting meal:", error);
+                showToast("Error deleting meal: " + error.message, "danger");
+            }
+        }
+
+        // Save waste
+        function saveWaste() {
+            try {
+                const date = document.getElementById('wasteDate').value;
+                const mealType = document.getElementById('wasteMealType').value;
+                const amount = document.getElementById('wasteAmount').value;
+                
+                if (!date || !mealType || !amount) {
+                    showToast('Please fill all fields', 'warning');
+                    return;
+                }
+                
+                // Estimate cost (using 50 MAD per kg as a rough estimate)
+                const estimatedCost = parseFloat(amount) * 50;
+                
+                const data = JSON.parse(localStorage.getItem('hotelData'));
+                data.waste.push({
+                    id: Date.now(),
+                    date: date,
+                    mealType: mealType,
+                    amount: parseFloat(amount),
+                    estimatedCost: estimatedCost
+                });
+                
+                localStorage.setItem('hotelData', JSON.stringify(data));
+                
+                // Clear form
+                document.getElementById('wasteMealType').value = '';
+                document.getElementById('wasteAmount').value = '';
+                
+                // Reload data
+                loadWaste(data.waste);
+                updateDashboard();
+                
+                showToast('Waste record saved successfully', 'success');
+                console.log("Waste record saved successfully");
+            } catch (error) {
+                console.error("Error saving waste:", error);
+                showToast("Error saving waste: " + error.message, "danger");
+            }
+        }
+
+        // Load waste
+        function loadWaste(waste) {
+            try {
+                const tbody = document.getElementById('wasteTableBody');
+                tbody.innerHTML = '';
+                
+                // Sort by date (newest first)
+                waste.sort((a, b) => new Date(b.date) - new Date(a.date));
+                
+                waste.forEach(wasteItem => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>${new Date(wasteItem.date).toLocaleDateString()}</td>
+                        <td>${wasteItem.mealType}</td>
+                        <td>${wasteItem.amount.toFixed(2)} kg</td>
+                        <td>${wasteItem.estimatedCost.toFixed(2)} MAD</td>
+                        <td>
+                            <button class="btn btn-sm btn-outline-danger" onclick="deleteWaste(${wasteItem.id})">
+                                <i class="bi bi-trash"></i>
+                            </button>
+                        </td>
+                    `;
+                    tbody.appendChild(row);
+                });
+                
+                console.log("Waste data loaded successfully");
+            } catch (error) {
+                console.error("Error loading waste data:", error);
+                showToast("Error loading waste data: " + error.message, "danger");
+            }
+        }
+
+        // Delete waste
+        function deleteWaste(id) {
+            try {
+                if (confirm('Are you sure you want to delete this waste record?')) {
+                    const data = JSON.parse(localStorage.getItem('hotelData'));
+                    data.waste = data.waste.filter(wasteItem => wasteItem.id !== id);
+                    localStorage.setItem('hotelData', JSON.stringify(data));
+                    loadWaste(data.waste);
+                    updateDashboard();
+                    showToast('Waste record deleted', 'info');
+                    console.log("Waste record deleted successfully, ID:", id);
+                }
+            } catch (error) {
+                console.error("Error deleting waste record:", error);
+                showToast("Error deleting waste record: " + error.message, "danger");
+            }
+        }
+
+        // Save menu plan
+        function saveMenuPlan() {
+            try {
+                const weekStart = document.getElementById('weekStart').value;
+                const day = document.getElementById('menuDay').value;
+                const mealType = document.getElementById('menuMealType').value;
+                const expectedEmployees = document.getElementById('expectedEmployees').value;
+                const menuItems = document.getElementById('menuItems').value;
+                const totalCost = document.getElementById('menuCost').value;
+                
+                if (!weekStart || !day || !mealType || !expectedEmployees || !menuItems || !totalCost) {
+                    showToast('Please fill all fields', 'warning');
+                    return;
+                }
+                
+                const costPerEmployee = parseFloat(totalCost) / parseInt(expectedEmployees);
+                
+                const data = JSON.parse(localStorage.getItem('hotelData'));
+                data.menuPlans.push({
+                    id: Date.now(),
+                    weekStart: weekStart,
+                    day: day,
+                    mealType: mealType,
+                    expectedEmployees: parseInt(expectedEmployees),
+                    menuItems: menuItems.split('\n').filter(item => item.trim()),
+                    totalCost: parseFloat(totalCost),
+                    costPerEmployee: costPerEmployee
+                });
+                
+                localStorage.setItem('hotelData', JSON.stringify(data));
+                
+                // Clear form
+                document.getElementById('menuDay').value = '';
+                document.getElementById('menuMealType').value = '';
+                document.getElementById('expectedEmployees').value = '';
+                document.getElementById('menuItems').value = '';
+                document.getElementById('menuCost').value = '';
+                
+                // Reload data
+                loadMenuPlans(data.menuPlans);
+                updateDashboard();
+                
+                showToast('Menu plan saved successfully', 'success');
+                console.log("Menu plan saved successfully");
+            } catch (error) {
+                console.error("Error saving menu plan:", error);
+                showToast("Error saving menu plan: " + error.message, "danger");
+            }
+        }
+
+        // Load menu plans
+        function loadMenuPlans(menuPlans) {
+            try {
+                const tbody = document.getElementById('menuTableBody');
+                tbody.innerHTML = '';
+                
+                // Sort by week start (newest first)
+                menuPlans.sort((a, b) => new Date(b.weekStart) - new Date(a.weekStart));
+                
+                menuPlans.forEach(plan => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>${new Date(plan.weekStart).toLocaleDateString()}</td>
+                        <td>${plan.day}</td>
+                        <td>${plan.mealType}</td>
+                        <td>${plan.expectedEmployees}</td>
+                        <td>${plan.menuItems.join(', ')}</td>
+                        <td>${plan.totalCost.toFixed(2)} MAD</td>
+                        <td>${plan.costPerEmployee.toFixed(2)} MAD</td>
+                        <td>
+                            <button class="btn btn-sm btn-outline-danger" onclick="deleteMenuPlan(${plan.id})">
+                                <i class="bi bi-trash"></i>
+                            </button>
+                        </td>
+                    `;
+                    tbody.appendChild(row);
+                });
+                
+                console.log("Menu plans loaded successfully");
+            } catch (error) {
+                console.error("Error loading menu plans:", error);
+                showToast("Error loading menu plans: " + error.message, "danger");
+            }
+        }
+
+        // Delete menu plan
+        function deleteMenuPlan(id) {
+            try {
+                if (confirm('Are you sure you want to delete this menu plan?')) {
+                    const data = JSON.parse(localStorage.getItem('hotelData'));
+                    data.menuPlans = data.menuPlans.filter(plan => plan.id !== id);
+                    localStorage.setItem('hotelData', JSON.stringify(data));
+                    loadMenuPlans(data.menuPlans);
+                    updateDashboard();
+                    showToast('Menu plan deleted', 'info');
+                    console.log("Menu plan deleted successfully, ID:", id);
+                }
+            } catch (error) {
+                console.error("Error deleting menu plan:", error);
+                showToast("Error deleting menu plan: " + error.message, "danger");
+            }
+        }
+
+        // Save goal
+        function saveGoal() {
+            try {
+                const period = document.getElementById('goalPeriod').value;
+                const amount = document.getElementById('goalAmount').value;
+                
+                if (!period || !amount) {
+                    showToast('Please fill all fields', 'warning');
+                    return;
+                }
+                
+                const data = JSON.parse(localStorage.getItem('hotelData'));
+                data.goals[period] = {
+                    target: parseFloat(amount),
+                    setOn: new Date().toISOString()
+                };
+                
+                localStorage.setItem('hotelData', JSON.stringify(data));
+                
+                // Clear form
+                document.getElementById('goalPeriod').value = '';
+                document.getElementById('goalAmount').value = '';
+                
+                // Reload data
+                loadGoals(data.goals);
+                updateDashboard();
+                
+                showToast('Goal set successfully', 'success');
+                console.log("Goal saved successfully");
+            } catch (error) {
+                console.error("Error saving goal:", error);
+                showToast("Error saving goal: " + error.message, "danger");
+            }
+        }
+
+        // Load goals
+        function loadGoals(goals) {
+            try {
+                const goalsDiv = document.getElementById('currentGoals');
+                goalsDiv.innerHTML = '';
+                
+                for (const [period, goal] of Object.entries(goals)) {
+                    const goalDiv = document.createElement('div');
+                    goalDiv.className = 'mb-2';
+                    goalDiv.innerHTML = `
+                        <strong>${period} Goal:</strong> ${goal.target.toFixed(2)} MAD 
+                        (Set on ${new Date(goal.setOn).toLocaleDateString()})
+                    `;
+                    goalsDiv.appendChild(goalDiv);
+                }
+                
+                // Update goal progress
+                updateGoalProgress(goals);
+                
+                console.log("Goals loaded successfully");
+            } catch (error) {
+                console.error("Error loading goals:", error);
+                showToast("Error loading goals: " + error.message, "danger");
+            }
+        }
+
+        // Update goal progress
+        function updateGoalProgress(goals) {
+            try {
+                const progressContainer = document.getElementById('goalProgress');
+                progressContainer.innerHTML = '';
+                
+                const data = JSON.parse(localStorage.getItem('hotelData'));
+                
+                for (const [period, goal] of Object.entries(goals)) {
+                    let currentCost = 0;
+                    
+                    if (period === 'Daily') {
+                        const today = new Date().toISOString().split('T')[0];
+                        currentCost = data.foodCosts
+                            .filter(cost => cost.date === today)
+                            .reduce((sum, cost) => sum + cost.cost, 0);
+                    } else if (period === 'Weekly') {
+                        const weekStart = new Date();
+                        weekStart.setDate(weekStart.getDate() - weekStart.getDay() + 1);
+                        const weekStartStr = weekStart.toISOString().split('T')[0];
+                        
+                        currentCost = data.foodCosts
+                            .filter(cost => cost.date >= weekStartStr)
+                            .reduce((sum, cost) => sum + cost.cost, 0);
+                    } else if (period === 'Monthly') {
+                        const monthStart = new Date();
+                        monthStart.setDate(1);
+                        const monthStartStr = monthStart.toISOString().split('T')[0];
+                        
+                        currentCost = data.foodCosts
+                            .filter(cost => cost.date >= monthStartStr)
+                            .reduce((sum, cost) => sum + cost.cost, 0);
+                    }
+                    
+                    const percentage = Math.min((currentCost / goal.target) * 100, 100);
+                    const statusClass = percentage < 80 ? 'bg-success' : percentage < 100 ? 'bg-warning' : 'bg-danger';
+                    
+                    const progressItemDiv = document.createElement('div');
+                    progressItemDiv.className = 'mb-3';
+                    progressItemDiv.innerHTML = `
+                        <div class="d-flex justify-content-between mb-1">
+                            <span>${period} Progress</span>
+                            <span>${currentCost.toFixed(2)} / ${goal.target.toFixed(2)} MAD</span>
+                        </div>
+                        <div class="goal-progress">
+                            <div class="goal-progress-bar ${statusClass}" style="width: ${percentage}%">
+                                ${percentage.toFixed(1)}%
+                            </div>
+                        </div>
+                    `;
+                    progressContainer.appendChild(progressItemDiv);
+                }
+                
+                console.log("Goal progress updated successfully");
+            } catch (error) {
+                console.error("Error updating goal progress:", error);
+                showToast("Error updating goal progress: " + error.message, "danger");
+            }
+        }
+
+        // Initialize charts
+        let dailyCostChart, mealTypeChart, benchmarkChart, benchmarkGoalChart;
+
+        function initializeCharts() {
+            try {
+                // Daily Cost Chart
+                const dailyCostCtx = document.getElementById('dailyCostChart').getContext('2d');
+                dailyCostChart = new Chart(dailyCostCtx, {
+                    type: 'line',
+                    data: {
+                        labels: [],
+                        datasets: [{
+                            label: 'Daily Food Cost (MAD)',
+                            data: [],
+                            backgroundColor: 'rgba(212, 175, 55, 0.2)',
+                            borderColor: 'rgba(212, 175, 55, 1)',
+                            borderWidth: 2,
+                            tension: 0.4
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        scales: {
+                            y: {
+                                beginAtZero: true
+                            }
+                        }
+                    }
+                });
+
+                // Meal Type Chart
+                const mealTypeCtx = document.getElementById('mealTypeChart').getContext('2d');
+                mealTypeChart = new Chart(mealTypeCtx, {
+                    type: 'doughnut',
+                    data: {
+                        labels: ['Breakfast', 'Lunch', 'Dinner'],
+                        datasets: [{
+                            data: [0, 0, 0],
+                            backgroundColor: [
+                                'rgba(212, 175, 55, 0.8)',
+                                'rgba(0, 0, 0, 0.7)',
+                                'rgba(100, 100, 100, 0.7)'
+                            ],
+                            borderWidth: 1
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false
+                    }
+                });
+
+                // Benchmark Chart
+                const benchmarkCtx = document.getElementById('benchmarkChart').getContext('2d');
+                benchmarkChart = new Chart(benchmarkCtx, {
+                    type: 'bar',
+                    data: {
+                        labels: [],
+                        datasets: [{
+                            label: 'Actual Cost (MAD)',
+                            data: [],
+                            backgroundColor: 'rgba(212, 175, 55, 0.7)',
+                            borderColor: 'rgba(212, 175, 55, 1)',
+                            borderWidth: 1
+                        }, {
+                            label: 'Target Cost (MAD)',
+                            data: [],
+                            backgroundColor: 'rgba(0, 0, 0, 0.5)',
+                            borderColor: 'rgba(0, 0, 0, 1)',
+                            borderWidth: 1
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        scales: {
+                            y: {
+                                beginAtZero: true
+                            }
+                        }
+                    }
+                });
+
+                // Benchmark Goal Chart
+                const benchmarkGoalCtx = document.getElementById('benchmarkGoalChart').getContext('2d');
+                benchmarkGoalChart = new Chart(benchmarkGoalCtx, {
+                    type: 'line',
+                    data: {
+                        labels: [],
+                        datasets: [{
+                            label: 'Actual Cost (MAD)',
+                            data: [],
+                            backgroundColor: 'rgba(212, 175, 55, 0.2)',
+                            borderColor: 'rgba(212, 175, 55, 1)',
+                            borderWidth: 2,
+                            tension: 0.4
+                        }, {
+                            label: 'Goal (MAD)',
+                            data: [],
+                            backgroundColor: 'rgba(0, 0, 0, 0.1)',
+                            borderColor: 'rgba(0, 0, 0, 0.7)',
+                            borderWidth: 2,
+                            borderDash: [5, 5],
+                            tension: 0.4
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        scales: {
+                            y: {
+                                beginAtZero: true
+                            }
+                        }
+                    }
+                });
+                
+                console.log("Charts initialized successfully");
+            } catch (error) {
+                console.error("Error initializing charts:", error);
+                showToast("Error initializing charts: " + error.message, "danger");
+            }
+        }
+
+        // Update dashboard
+        function updateDashboard() {
+            try {
+                const data = JSON.parse(localStorage.getItem('hotelData'));
+                
+                // Update stats
+                updateStats(data);
+                
+                // Update charts
+                updateDailyCostChart(data.foodCosts);
+                updateMealTypeChart(data.foodCosts);
+                updateBenchmarkChart(data.foodCosts, data.goals);
+                updateBenchmarkGoalChart(data.foodCosts, data.goals);
+                
+                console.log("Dashboard updated successfully");
+            } catch (error) {
+                console.error("Error updating dashboard:", error);
+                showToast("Error updating dashboard: " + error.message, "danger");
+            }
+        }
+
+        // Update stats
+        function updateStats(data) {
+            try {
+                // Total employees
+                const today = new Date().toISOString().split('T')[0];
+                const todayEmployees = data.employees.filter(emp => emp.date === today);
+                
+                let totalEmployees = 0;
+                for (const emp of todayEmployees) {
+                    totalEmployees += emp.count;
+                }
+                document.getElementById('totalEmployees').textContent = totalEmployees;
+                
+                // Today's food cost
+                const todayCost = data.foodCosts
+                    .filter(cost => cost.date === today)
+                    .reduce((sum, cost) => sum + cost.cost, 0);
+                document.getElementById('todayFoodCost').textContent = `${todayCost.toFixed(2)} MAD`;
+                
+                // Weekly average
+                const weekStart = new Date();
+                weekStart.setDate(weekStart.getDate() - weekStart.getDay() + 1);
+                const weekStartStr = weekStart.toISOString().split('T')[0];
+                
+                const weeklyCosts = data.foodCosts
+                    .filter(cost => cost.date >= weekStartStr)
+                    .reduce((sum, cost) => sum + cost.cost, 0);
+                
+                const weeklyAverage = weeklyCosts / 7; // Assuming 7 days in a week
+                document.getElementById('weeklyAverage').textContent = `${weeklyAverage.toFixed(2)} MAD`;
+                
+                // Waste percentage
+                const totalMealCost = data.meals
+                    .reduce((sum, meal) => sum + meal.totalCost, 0);
+                
+                const totalWasteCost = data.waste
+                    .reduce((sum, waste) => sum + waste.estimatedCost, 0);
+                
+                const wastePercentage = totalMealCost > 0 ? (totalWasteCost / totalMealCost) * 100 : 0;
+                document.getElementById('wastePercentage').textContent = `${wastePercentage.toFixed(1)}%`;
+                
+                console.log("Stats updated successfully");
+            } catch (error) {
+                console.error("Error updating stats:", error);
+                showToast("Error updating stats: " + error.message, "danger");
+            }
+        }
+
+        // Update daily cost chart
+        function updateDailyCostChart(foodCosts) {
+            try {
+                // Group costs by date
+                const costsByDate = {};
+                foodCosts.forEach(cost => {
+                    if (!costsByDate[cost.date]) {
+                        costsByDate[cost.date] = 0;
+                    }
+                    costsByDate[cost.date] += cost.cost;
+                });
+                
+                // Sort dates
+                const sortedDates = Object.keys(costsByDate).sort();
+                
+                // Get last 7 days
+                const last7Days = sortedDates.slice(-7);
+                const last7DaysCosts = last7Days.map(date => costsByDate[date]);
+                
+                // Update chart
+                dailyCostChart.data.labels = last7Days.map(date => new Date(date).toLocaleDateString());
+                dailyCostChart.data.datasets[0].data = last7DaysCosts;
+                dailyCostChart.update();
+                
+                console.log("Daily cost chart updated successfully");
+            } catch (error) {
+                console.error("Error updating daily cost chart:", error);
+                showToast("Error updating daily cost chart: " + error.message, "danger");
+            }
+        }
+
+        // Update meal type chart
+        function updateMealTypeChart(foodCosts) {
+            try {
+                // Group costs by meal type
+                const costsByMealType = {
+                    'Breakfast': 0,
+                    'Lunch': 0,
+                    'Dinner': 0
+                };
+                
+                foodCosts.forEach(cost => {
+                    if (costsByMealType.hasOwnProperty(cost.mealType)) {
+                        costsByMealType[cost.mealType] += cost.cost;
+                    }
+                });
+                
+                // Update chart
+                mealTypeChart.data.datasets[0].data = Object.values(costsByMealType);
+                mealTypeChart.update();
+                
+                console.log("Meal type chart updated successfully");
+            } catch (error) {
+                console.error("Error updating meal type chart:", error);
+                showToast("Error updating meal type chart: " + error.message, "danger");
+            }
+        }
+
+        // Update benchmark chart
+        function updateBenchmarkChart(foodCosts, goals) {
+            try {
+                // Group costs by week
+                const costsByWeek = {};
+                foodCosts.forEach(cost => {
+                    const date = new Date(cost.date);
+                    const weekStart = new Date(date);
+                    weekStart.setDate(date.getDate() - date.getDay() + 1);
+                    const weekKey = weekStart.toISOString().split('T')[0];
+                    
+                    if (!costsByWeek[weekKey]) {
+                        costsByWeek[weekKey] = 0;
+                    }
+                    costsByWeek[weekKey] += cost.cost;
+                });
+                
+                // Sort weeks
+                const sortedWeeks = Object.keys(costsByWeek).sort();
+                
+                // Get last 4 weeks
+                const last4Weeks = sortedWeeks.slice(-4);
+                const last4WeeksCosts = last4Weeks.map(week => costsByWeek[week]);
+                
+                // Get weekly goal
+                const weeklyGoal = goals.Weekly ? goals.Weekly.target : 0;
+                const weeklyGoals = last4Weeks.map(() => weeklyGoal);
+                
+                // Update chart
+                benchmarkChart.data.labels = last4Weeks.map(week => {
+                    const date = new Date(week);
+                    return `Week of ${date.toLocaleDateString()}`;
+                });
+                benchmarkChart.data.datasets[0].data = last4WeeksCosts;
+                benchmarkChart.data.datasets[1].data = weeklyGoals;
+                benchmarkChart.update();
+                
+                console.log("Benchmark chart updated successfully");
+            } catch (error) {
+                console.error("Error updating benchmark chart:", error);
+                showToast("Error updating benchmark chart: " + error.message, "danger");
+            }
+        }
+
+        // Update benchmark goal chart
+        function updateBenchmarkGoalChart(foodCosts, goals) {
+            try {
+                // Group costs by date
+                const costsByDate = {};
+                foodCosts.forEach(cost => {
+                    if (!costsByDate[cost.date]) {
+                        costsByDate[cost.date] = 0;
+                    }
+                    costsByDate[cost.date] += cost.cost;
+                });
+                
+                // Sort dates
+                const sortedDates = Object.keys(costsByDate).sort();
+                
+                // Get last 30 days
+                const last30Days = sortedDates.slice(-30);
+                const last30DaysCosts = last30Days.map(date => costsByDate[date]);
+                
+                // Get daily goal
+                const dailyGoal = goals.Daily ? goals.Daily.target : 0;
+                const dailyGoals = last30Days.map(() => dailyGoal);
+                
+                // Update chart
+                benchmarkGoalChart.data.labels = last30Days.map(date => new Date(date).toLocaleDateString());
+                benchmarkGoalChart.data.datasets[0].data = last30DaysCosts;
+                benchmarkGoalChart.data.datasets[1].data = dailyGoals;
+                benchmarkGoalChart.update();
+                
+                console.log("Benchmark goal chart updated successfully");
+            } catch (error) {
+                console.error("Error updating benchmark goal chart:", error);
+                showToast("Error updating benchmark goal chart: " + error.message, "danger");
+            }
+        }
+
+        // Show toast notification
+        function showToast(message, type = 'info') {
+            try {
+                const toastElement = document.getElementById('liveToast');
+                const toastMessage = document.getElementById('toastMessage');
+                
+                toastMessage.textContent = message;
+                
+                const toast = new bootstrap.Toast(toastElement);
+                toast.show();
+                
+                console.log("Toast notification shown:", message);
+            } catch (error) {
+                console.error("Error showing toast notification:", error);
+                // Fallback to alert if toast fails
+                alert(message);
+            }
+        }
+
+        // Export data function
+        function exportData() {
+            try {
+                const data = JSON.parse(localStorage.getItem('hotelData'));
+                const dataStr = JSON.stringify(data, null, 2);
+                const dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(dataStr);
+                
+                const exportFileDefaultName = `hotel_data_${new Date().toISOString().split('T')[0]}.json`;
+                
+                const linkElement = document.createElement('a');
+                linkElement.setAttribute('href', dataUri);
+                linkElement.setAttribute('download', exportFileDefaultName);
+                linkElement.click();
+                
+                console.log("Data exported successfully");
+            } catch (error) {
+                console.error("Error exporting data:", error);
+                showToast("Error exporting data: " + error.message, "danger");
+            }
+        }
+
+        // Import data function
+        function importData(event) {
+            try {
+                const file = event.target.files[0];
+                if (!file) return;
+                
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    try {
+                        const data = JSON.parse(e.target.result);
+                        localStorage.setItem('hotelData', JSON.stringify(data));
+                        loadAllData();
+                        updateDashboard();
+                        showToast('Data imported successfully', 'success');
+                        console.log("Data imported successfully");
+                    } catch (error) {
+                        console.error("Error parsing imported data:", error);
+                        showToast('Error importing data: Invalid file format', 'danger');
+                    }
+                };
+                reader.readAsText(file);
+            } catch (error) {
+                console.error("Error importing data:", error);
+                showToast("Error importing data: " + error.message, "danger");
+            }
+        }
+    </script>
+</body>
+</html>
